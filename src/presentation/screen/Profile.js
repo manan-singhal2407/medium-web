@@ -37,6 +37,7 @@ const Profile = () => {
                             </div>
                         </div>
                         <div className="ml-4 mr-12 my-4 border-t border-gray-150"></div>
+                        <PostViewComponent />
                     </div>
                 </div>
                 <div className="border-l border-gray-150"></div>
