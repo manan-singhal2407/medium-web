@@ -5,7 +5,7 @@ import * as yup from "yup";
 import LoginRepositoryImpl from "../../data/repositories/LoginRepositoryImpl";
 
 const LoginSchema = yup.object().shape({
-    emailId: yup.string().email("Enter valid email").required("Enter your email id"),
+    email: yup.string().email("Enter valid email").required("Enter your email id"),
     password: yup.string().required("Create a password"),
 });
 
@@ -14,6 +14,8 @@ export const Login = () => {
 
     const loginUserWith = async (email, password) => {
         const loginRepository = new LoginRepositoryImpl();
+        localStorage.setItem('user_id', 'asjfbhasbjfba');
+        navigate('/');
         const data = loginRepository.loginUserWithEmailAndPassword(email, password);
     };
 
@@ -41,7 +43,7 @@ export const Login = () => {
                         touched,
                         errors,
                     }) => (
-                        <form noValidate onSubmit={handleSubmit}>
+                        <form onSubmit={handleSubmit}>
                             <div>
                                 <p className="text-black mb-1">Email:</p>
                                 <input

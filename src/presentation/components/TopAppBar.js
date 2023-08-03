@@ -9,13 +9,14 @@ const TopNavBar = ({ searchTextParam, fromDateParam, toDateParam, likesParam, co
     const [likesRange, setLikesRange] = useState(likesParam);
     const [commentsRange, setCommentsRange] = useState(commentsParam);
     const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
+    const [userId, setUserId] = useState(false);
     const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
 
     const today = new Date().toISOString().split('T')[0];
 
     const handleClearFilter = () => {
         setIsFilterModalOpen(false);
-        if (searchText === '') {
+        if (searchText === '' || searchText === null) {
             navigate('/');
         } else {
             navigate({
@@ -39,6 +40,7 @@ const TopNavBar = ({ searchTextParam, fromDateParam, toDateParam, likesParam, co
 
     useEffect(() => {
         setIsUserLoggedIn(localStorage.getItem('user_id') === null || localStorage.getItem('user_id') === '' ? false : true);
+        setUserId(localStorage.getItem('user_id') === null || localStorage.getItem('user_id') === '' ? '' : localStorage.getItem('user_id'));
     }, []);
 
     return (
@@ -75,7 +77,7 @@ const TopNavBar = ({ searchTextParam, fromDateParam, toDateParam, likesParam, co
                                     <input
                                         type="date"
                                         value={fromDate}
-                                        max={toDate !== '' ? toDate : today}
+                                        max={toDate !== null && toDate !== '' ? toDate : today}
                                         onChange={(e) => setFromDate(e.target.value)}
                                         className="px-2 py-1 rounded-md focus:outline-none text-black bg-white-200 mr-4 focus:ring focus:border-black-300"
                                     />
@@ -147,7 +149,7 @@ const TopNavBar = ({ searchTextParam, fromDateParam, toDateParam, likesParam, co
                         <a href="/new-story" className="text-black hover:text-blue-300">Add Post</a>
                     </div>
                     <div className="mr-6">
-                        <a href="/profile" className="text-black hover:text-blue-300">Profile</a>
+                        <a href={`/profile/${userId}`} className="text-black hover:text-blue-300">Profile</a>
                     </div>
                     <div>
                         <a href="" className="text-black hover:text-blue-300" onClick={() => {

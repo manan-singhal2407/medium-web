@@ -10,6 +10,7 @@ import { ProtectedRoute } from "./presentation/route/ProtectedRoute";
 import NewStory from "./presentation/screen/NewStory";
 import PostDetail from "./presentation/screen/PostDetail";
 import Search from "./presentation/screen/Search";
+import Profile from "./presentation/screen/Profile";
 
 const router = createBrowserRouter([
 	{ path: "/", element: <Home /> },
@@ -17,6 +18,7 @@ const router = createBrowserRouter([
 	{ path: "/signup", element: <SignUp /> },
 	{ path: "/post/:id", element: <PostDetail /> },
 	{ path: "/search", element: <Search /> },
+	{ path: "/profile/:id", element: <Profile /> },
 	{
 		path: "/",
 		element: <ProtectedRoute />,
