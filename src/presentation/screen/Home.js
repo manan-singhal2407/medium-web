@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import HomeRepositoryImpl from '../../../data/repositories/HomeRepositoryImpl';
+import HomeRepositoryImpl from '../../data/repositories/HomeRepositoryImpl';
 import { useNavigate } from "react-router-dom";
-import TopNavBar from '../../components/TopAppBar';
+import TopNavBar from '../components/TopAppBar';
 
 const Home = () => {
     const navigate = useNavigate();

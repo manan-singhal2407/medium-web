@@ -1,8 +1,8 @@
 import LoginRepository from '../../domain/repositories/LoginRepository.js';
 
 export default class LoginRepositoryImpl extends LoginRepository {
-    async loginUserWithEmailAndPassword(emailId, password) {
-        console.log(emailId + " - " + password);
+    async loginUserWithEmailAndPassword(email, password) {
+        console.log(email + " - " + password);
         // const response = await fetch(`https://www.omdbapi.com/?apikey=f1140859&s=${text}&page=${page}&y=${year}`);
         // let movies = [];
         // if (response.status === 200) {

@@ -1,3 +1,3 @@
 export default class LoginRepository {
-    async loginUserWithEmailAndPassword(emailId, password) { }
+    async loginUserWithEmailAndPassword(email, password) { }
 }

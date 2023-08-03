@@ -3,18 +3,20 @@ import ReactDOM from "react-dom/client";
 import './index.css';
 
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import Home from "./presentation/screen/home/Home";
-import { Login } from "./presentation/screen/login/Login";
-import { SignUp } from "./presentation/screen/signup/Signup";
+import Home from "./presentation/screen/Home";
+import { Login } from "./presentation/screen/Login";
+import { SignUp } from "./presentation/screen/Signup";
 import { ProtectedRoute } from "./presentation/route/ProtectedRoute";
-import NewStory from "./presentation/screen/newStory/NewStory";
-import PostDetail from "./presentation/screen/postDetail/PostDetail";
+import NewStory from "./presentation/screen/NewStory";
+import PostDetail from "./presentation/screen/PostDetail";
+import Search from "./presentation/screen/Search";
 
 const router = createBrowserRouter([
 	{ path: "/", element: <Home /> },
 	{ path: "/login", element: <Login /> },
 	{ path: "/signup", element: <SignUp /> },
 	{ path: "/post/:id", element: <PostDetail /> },
+	{ path: "/search", element: <Search /> },
 	{
 		path: "/",
 		element: <ProtectedRoute />,

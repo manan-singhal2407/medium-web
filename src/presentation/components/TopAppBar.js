@@ -1,24 +1,40 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 
-const TopNavBar = () => {
+const TopNavBar = ({ searchTextParam, fromDateParam, toDateParam, likesParam, commentsParam }) => {
     const navigate = useNavigate();
-    const [searchText, setSearchText] = useState('');
-    const [fromDate, setFromDate] = useState('');
-    const [toDate, setToDate] = useState('');
-    const [likesRange, setLikesRange] = useState('');
-    const [commentsRange, setCommentsRange] = useState('');
+    const [searchText, setSearchText] = useState(searchTextParam);
+    const [fromDate, setFromDate] = useState(fromDateParam);
+    const [toDate, setToDate] = useState(toDateParam);
+    const [likesRange, setLikesRange] = useState(likesParam);
+    const [commentsRange, setCommentsRange] = useState(commentsParam);
     const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
     const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
 
     const today = new Date().toISOString().split('T')[0];
 
-    const handleApplyFilters = () => {
+    const handleClearFilter = () => {
         setIsFilterModalOpen(false);
+        if (searchText === '') {
+            navigate('/');
+        } else {
+            navigate({
+                pathname: '/search',
+                search: `?q=${searchText}`,
+            });
+        }
         setFromDate('');
         setToDate('');
         setLikesRange('');
         setCommentsRange('');
+    };
+
+    const handleApplyFilters = () => {
+        setIsFilterModalOpen(false);
+        navigate({
+            pathname: '/search',
+            search: `?q=${searchText}&fromDate=${fromDate}&toDate=${toDate}&likes=${likesRange}&comments=${commentsRange}`,
+        });
     };
 
     useEffect(() => {
@@ -34,8 +50,11 @@ const TopNavBar = () => {
                     value={searchText}
                     onChange={(e) => setSearchText(e.target.value)}
                     onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                            navigate(`/search/${searchText}`);
+                        if (e.key === 'Enter' && searchText !== '') {
+                            navigate({
+                                pathname: '/search',
+                                search: `?q=${searchText}`,
+                            });
                         }
                     }}
                     className="w-60 px-4 py-2 mr-2 rounded-md focus:outline-none text-black bg-gray-200 focus:ring focus:border-black-300"
@@ -109,8 +128,12 @@ const TopNavBar = () => {
                                     className="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 mr-8"
                                 >Close</button>
                                 <button
+                                    onClick={handleClearFilter}
+                                    className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-gray-600 mr-8"
+                                >Clear</button>
+                                <button
                                     onClick={handleApplyFilters}
-                                    className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                                    className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-blue-600"
                                 >Apply</button>
                             </div>
                         </div>

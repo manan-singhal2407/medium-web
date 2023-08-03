@@ -1,5 +1,5 @@
 import React from 'react';
-import TopNavBar from '../../components/TopAppBar';
+import TopNavBar from '../components/TopAppBar';
 
 const PostDetail = () => {
     return (
