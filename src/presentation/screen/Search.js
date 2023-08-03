@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import TopNavBar from '../components/TopAppBar';
 import { useSearchParams } from 'react-router-dom';
+import PostViewComponent from '../components/PostViewComponent';
+import TopicsViewComponent from '../components/TopicsViewComponent';
+import ProfileViewComponent from '../components/ProfileViewComponent';
 
 const Search = () => {
     const [searchParams, setSearchParams] = useSearchParams();
@@ -28,10 +31,22 @@ const Search = () => {
                             <div className="ml-4 mr-12 my-4 border-t border-gray-150"></div>
                         </div>
                     )}
+                    <PostViewComponent />
+                    <PostViewComponent />
                 </div>
                 <div style={{ width: '400px' }} className="mx-auto text-start">
                     {searchText !== '' && (
-                        <h1 className="text-5xl font-bold mb-4 text-black mb-8">----</h1>
+                        <div className='ml-8'>
+                            <h1 className="text-xl font-bold text-black mb-4">Topics matching {searchText}</h1>
+                            <TopicsViewComponent topicsList={['Mana', 'Manana', 'Man', 'Mana', 'Manana', 'Man', 'Mana']} />
+                            <a href="#topics" className='mt-8 py-4 text-green-500 hover:text-black' onClick={() => setActiveTab(3)}>See all</a>
+                            <div className="my-8 border-t border-gray-150"></div>
+                            <h1 className="text-xl font-bold text-black my-4">People matching {searchText}</h1>
+                            <ProfileViewComponent />
+                            <ProfileViewComponent />
+                            <ProfileViewComponent />
+                            <a href="#people" className='mt-8 py-4 text-green-500 hover:text-black' onClick={() => setActiveTab(2)}>See all</a>
+                        </div>
                     )}
                 </div>
             </div>
