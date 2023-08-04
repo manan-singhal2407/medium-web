@@ -14,10 +14,8 @@ const TopNavBarEditor = ({ textShowingSavingHistory, showRevisionHistoryIcon, on
                 <span className='text-black mx-4 font-bold text-md'>Draft in {userName}</span>
                 <span className='text-gray-500 mx-4 text-sm'>{textShowingSavingHistory}</span>
             </div>
-            {showRevisionHistoryIcon && (
-                <div className="flex items-center">
-                    <PrimaryButton text='Publish' onClickHandle={() => { }} />
-                </div>
+            {true && (
+                <PrimaryButton text='Publish' onClickHandle={() => { }} />
             )}
             <PrimaryButton text='Publish' onClickHandle={onClickPublishButton} />
         </nav>

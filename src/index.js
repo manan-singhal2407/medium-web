@@ -11,6 +11,7 @@ import PostDetail from "./presentation/screen/PostDetail";
 import Search from "./presentation/screen/Search";
 import Profile from "./presentation/screen/Profile";
 import Topics from "./presentation/screen/Topics";
+import Lists from "./presentation/screen/Lists";
 
 // todo profile/search section have lists option with Reading List as fixed.
 
@@ -22,6 +23,7 @@ const router = createBrowserRouter([
 	{ path: "/topic/:name", element: <Topics /> },
 	{ path: "/post/:id", element: <PostDetail /> },
 	{ path: "/profile/:id", element: <Profile /> },
+	{ path: "/list/:id", element: <Lists /> },
 	{
 		path: "/",
 		element: <ProtectedRoute />,

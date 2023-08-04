@@ -1,26 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import TopNavBar from '../components/TopAppBar';
 import TopicsPostViewComponent from '../components/TopicsPostViewComponent';
 
 const Topics = () => {
     const params = useParams();
     const topicName = params.name;
-    const navigate = useNavigate();
-    const [posts, setPosts] = useState(['More data', 'More data', 'More data', 'More data', 'More data', 'More data']);
+    const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(false);
 
-    const fetchMoreData = () => {
+    const fetchPostData = () => {
         if (loading) return;
-        setLoading(true);
 
+        setLoading(true);
         setTimeout(() => {
             try {
-                const newData = ['More data' + Date.now(), 'More data' + Date.now(), 'More data' + Date.now(), 'More data' + Date.now(), 'More data' + Date.now(), 'More data' + Date.now()];
-                const firstElement = newData.shift();
-                const remainingElements = newData;
-
-                const newPosts = [...posts, firstElement, ...remainingElements];
+                const newData = ['More data', 'More data', 'More data', 'More data', 'More data', 'More data'];
+                const newPosts = [...posts, ...newData];
                 console.log(newPosts.length);
                 setPosts(newPosts);
             } catch (error) {
@@ -31,19 +27,21 @@ const Topics = () => {
     };
 
     useEffect(() => {
-        fetchMoreData();
+        fetchPostData();
+    }, []);
+
+    useEffect(() => {
         const handleScroll = () => {
             if ((window.innerHeight + window.scrollY) >= document.documentElement.scrollHeight) {
                 console.log("Bottom");
-                fetchMoreData();
+                fetchPostData();
             }
         };
-
         window.addEventListener('scroll', handleScroll);
         return () => {
             window.removeEventListener('scroll', handleScroll);
         };
-    }, []);
+    }, [fetchPostData]);
 
     return (
         <div className="flex flex-col h-screen w-screen">

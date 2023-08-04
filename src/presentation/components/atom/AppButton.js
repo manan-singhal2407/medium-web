@@ -14,4 +14,11 @@ const SecondaryButton = ({ text, onClickHandle }) => {
     );
 };
 
-export { PrimaryButton, SecondaryButton };
+const RemoveButton = ({ text, onClickHandle }) => {
+    return (
+        <button className="mr-auto ml-4 bg-red-500 hover:bg-red-600 focus:outline-none text-white px-4 py-1.5 rounded-[2rem] border-none"
+            onClick={onClickHandle}>{text}</button>
+    );
+};
+
+export { PrimaryButton, SecondaryButton, RemoveButton };
