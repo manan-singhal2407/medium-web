@@ -2,7 +2,7 @@ import React from "react";
 import * as yup from "yup";
 import { useNavigate } from "react-router-dom";
 import { Formik } from "formik";
-import SignupRepositoryImpl from "../../data/repositories/SignupRepositoryImpl";
+import AuthRepositoryImpl from "../../data/repositories/AuthRepositoryImpl";
 
 const SignUpSchema = yup.object().shape({
     name: yup.string().required("Field required"),
@@ -18,8 +18,14 @@ export const SignUp = () => {
     const navigate = useNavigate();
 
     const signupUserWith = async (name, email, password) => {
-        const signupRepository = new SignupRepositoryImpl();
-        const data = signupRepository.signupUserWithEmailAndPassword(name, email, password);
+        const authRepositoryImpl = new AuthRepositoryImpl();
+        const message = await authRepositoryImpl.signupUserWithEmailAndPassword(name, email, password);
+        if (message === 'success') {
+            navigate('/login');
+        } else {
+            alert(message);
+            navigate('/');
+        }
     };
 
     return (
@@ -37,7 +43,6 @@ export const SignUp = () => {
                     onSubmit={(values, { setSubmitting }) => {
                         signupUserWith(values.name, values.email, values.password)
                         setSubmitting(false);
-                        navigate("/");
                     }}
                 >
                     {({

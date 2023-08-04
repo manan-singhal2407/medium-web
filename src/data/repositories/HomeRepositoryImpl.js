@@ -1,7 +1,4 @@
-import HomeRepository from '../../domain/repositories/HomeRepository.js';
-import HomeEntity from '../model/HomeEntity.js';
-
-export default class HomeRepositoryImpl extends HomeRepository {
+export default class HomeRepositoryImpl {
     async fetchHomePageInfoForUser() {
         const userId = localStorage.getItem("user_id");
         // const response = await fetch(`https://www.omdbapi.com/?apikey=f1140859&s=${text}&page=${page}&y=${year}`);

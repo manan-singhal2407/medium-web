@@ -1,8 +1,8 @@
 import { Formik } from "formik";
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import * as yup from "yup";
-import LoginRepositoryImpl from "../../data/repositories/LoginRepositoryImpl";
+import AuthRepositoryImpl from "../../data/repositories/AuthRepositoryImpl";
 
 const LoginSchema = yup.object().shape({
     email: yup.string().email("Enter valid email").required("Enter your email id"),
@@ -13,11 +13,12 @@ export const Login = () => {
     const navigate = useNavigate();
 
     const loginUserWith = async (email, password) => {
-        const loginRepository = new LoginRepositoryImpl();
-        localStorage.setItem('user_id', 'asjfbhasbjfba');
-        localStorage.setItem('user_name', 'Rohit Sharma');
+        const authRepositoryImpl = new AuthRepositoryImpl();
+        const message = await authRepositoryImpl.loginUserWithEmailAndPassword(email, password);
+        if (message !== 'success') {
+            alert(message);
+        }
         navigate('/');
-        const data = loginRepository.loginUserWithEmailAndPassword(email, password);
     };
 
     return (
@@ -33,7 +34,6 @@ export const Login = () => {
                     onSubmit={(values, { setSubmitting }) => {
                         loginUserWith(values.email, values.password)
                         setSubmitting(false);
-                        navigate("/");
                     }}
                 >
                     {({

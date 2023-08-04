@@ -14,11 +14,9 @@ import Topics from "./presentation/screen/Topics";
 import Lists from "./presentation/screen/Lists";
 import AllPosts from "./presentation/screen/AllPosts";
 
-// todo add comment & comment reply
 // todo edit profile
 // todo revision history
 // todo only view 1 post then show price cost
-// todo fix sorting issue likes and comments
 
 const router = createBrowserRouter([
 	{ path: "/", element: <Home /> },

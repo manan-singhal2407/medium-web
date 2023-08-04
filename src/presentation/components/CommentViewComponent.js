@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import ic_like from '../../assets/images/ic_like.svg';
 import ic_liked from '../../assets/images/ic_liked.svg';
 
-const CommentViewComponent = () => {
+const CommentViewComponent = ({ handleReplyClick }) => {
     const navigate = useNavigate();
 
     const handleUserClick = () => {
@@ -33,7 +33,7 @@ const CommentViewComponent = () => {
                     {1076}
                 </div>
                 {true && (
-                    <div className="flex items-center mr-6 text-black cursor-pointer font-bold">
+                    <div className="flex items-center mr-6 text-black cursor-pointer font-bold" onClick={handleReplyClick}>
                         Reply
                     </div>
                 )}

@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
+import { PrimaryButton, SecondaryButton } from './atom/AppButton';
+import ic_close from '../../assets/images/ic_close.svg'
 
 const TopNavBar = ({ searchTextParam, fromDateParam, toDateParam, likesParam, commentsParam }) => {
     const navigate = useNavigate();
@@ -61,16 +63,11 @@ const TopNavBar = ({ searchTextParam, fromDateParam, toDateParam, likesParam, co
                     }}
                     className="w-60 px-4 py-2 mr-2 rounded-md focus:outline-none text-black bg-gray-200 focus:ring focus:border-black-300"
                 />
-                <button
-                    onClick={() => setIsFilterModalOpen(true)}
-                    className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-                >
-                    Filter
-                </button>
-
+                <PrimaryButton text='Filter' onClickHandle={() => setIsFilterModalOpen(true)} />
                 {isFilterModalOpen && (
                     <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center z-50">
                         <div className="bg-blue-100 p-4 rounded-md shadow-md">
+                            <img className='ml-auto mb-4 mr-4 cursor-pointer' src={ic_close} alt='' onClick={() => setIsFilterModalOpen(false)} />
                             <div className="flex mb-4">
                                 <div className="mr-4">
                                     <label className='text-black mr-4'>From:</label>
@@ -126,21 +123,16 @@ const TopNavBar = ({ searchTextParam, fromDateParam, toDateParam, likesParam, co
                             </div>
                             <div className="flex justify-center">
                                 <button
-                                    onClick={() => setIsFilterModalOpen(false)}
-                                    className="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 mr-8"
-                                >Close</button>
-                                <button
                                     onClick={handleClearFilter}
-                                    className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-gray-600 mr-8"
+                                    className="mx-4 bg-transparent focus:outline-none text-red-500 px-4 py-1.5 rounded-[2rem] border-2 border-red-500 hover:border-red-500"
                                 >Clear</button>
                                 <button
                                     onClick={handleApplyFilters}
-                                    className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-blue-600"
+                                    className="mx-4 bg-green-500 hover:bg-green-600 focus:outline-none text-white px-4 py-1.5 rounded-[2rem] border-none"
                                 >Apply</button>
                             </div>
                         </div>
                     </div>
-
                 )}
             </div>
             {isUserLoggedIn

@@ -12,6 +12,7 @@ import ic_edit from '../../assets/images/ic_edit.svg';
 import ic_delete from '../../assets/images/ic_delete.svg';
 import TopicsPostViewComponent from '../components/TopicsPostViewComponent';
 import CommentViewComponent from '../components/CommentViewComponent';
+import CommentsInput from '../components/CommentInput';
 
 const PostDetail = () => {
     const navigate = useNavigate();
@@ -92,16 +93,19 @@ const PostDetail = () => {
                 <div className="mx-auto my-4 border-t border-gray-150 w-600"></div>
                 <img className="w-full h-80 object-cover my-4" src='image_url' alt='' />
                 <p className="text-lg">Some people in the industry do have degrees. I've worked with Doctors (not the medical kind, OK). Those with qualifications in the industry often choose not to mention them, because within many organizations there is a reverse snobbishness around education. Yet others wear glasses without medical reason (which really happens) and stand in front of a whiteboard on those video calls. I'd be more impressed if your whiteboard had more than a bullet-point list. That is, I know you don't understand the wider architecture of the application. Your whiteboard is like putting make-up on a pig.</p>
+                <CommentsInput postId='1' commentId='3' />
                 {true && (
                     // only show if comments > 1
                     <div>
                         <p className="text-lg font-bold text-black mt-8">Comments(18)</p>
-                        
                         {[...Array(10)].map((_, index) => (
                             <div key={index}>
-                                <CommentViewComponent />
+                                <CommentViewComponent handleReplyClick={() => {}} />
                                 {[...Array(1)].map((_, commentIndex) => (
                                     <div className='ml-16' key={commentIndex}>
+                                        {commentIndex === 0 && (
+                                            <CommentsInput postId='1' commentId='3' />
+                                        )}
                                         <CommentViewComponent />
                                     </div>
                                 ))}
