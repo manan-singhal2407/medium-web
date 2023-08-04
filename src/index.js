@@ -27,6 +27,7 @@ const router = createBrowserRouter([
 		element: <ProtectedRoute />,
 		children: [
 			{ path: "/new-story", element: <NewStory /> },
+			{ path: "/p/:id", element: <NewStory /> },
 		],
 	},
 ]);

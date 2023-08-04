@@ -1,4 +1,5 @@
 import React from 'react';
+import ic_bookmark from '../../assets/images/ic_bookmark_selected.svg';
 
 const PostViewComponent = () => {
     return (
@@ -66,21 +67,22 @@ const PostViewComponent = () => {
                         {0}
                     </div>
                     <div className="ml-auto flex items-center mr-6 curson-pointer">
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-5 w-5 mr-1"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                    >
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M19 9l-7 7-7-7"
-                        />
-                    </svg>
-                </div>
+                        <img src={ic_bookmark} alt='' />
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-5 w-5 mr-1"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M19 9l-7 7-7-7"
+                            />
+                        </svg>
+                    </div>
                 </div>
             </div>
             <div className="ml-auto w-56 h-44 mr-16 bg-gray-300 rounded-[1rem]">

@@ -44,7 +44,7 @@ const TopNavBar = ({ searchTextParam, fromDateParam, toDateParam, likesParam, co
     }, []);
 
     return (
-        <nav className="w-screen text-white flex justify-between items-center px-8 py-2">
+        <nav className="w-screen text-white flex justify-between items-center px-16 py-2">
             <div className="flex items-center flex-grow">
                 <input
                     type="text"

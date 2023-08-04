@@ -15,6 +15,7 @@ export const Login = () => {
     const loginUserWith = async (email, password) => {
         const loginRepository = new LoginRepositoryImpl();
         localStorage.setItem('user_id', 'asjfbhasbjfba');
+        localStorage.setItem('user_name', 'Rohit Sharma');
         navigate('/');
         const data = loginRepository.loginUserWithEmailAndPassword(email, password);
     };

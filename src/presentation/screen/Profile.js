@@ -34,6 +34,10 @@ const Profile = () => {
                                 <a href="#" className={`px-1 mx-4 my-2 py-4 text-gray-700 hover:text-black ${activeTab === 1 ? 'border-b-2 border-black' : ''}`} onClick={() => setActiveTab(1)}>Posts(12)</a>
                                 <a href="#following" className={`px-1 mx-4 my-2 py-4 text-gray-700 hover:text-black ${activeTab === 2 ? 'border-b-2 border-black' : ''}`} onClick={() => setActiveTab(2)}>Following(10,000)</a>
                                 <a href="#followers" className={`px-1 mx-4 my-2 py-4 text-gray-700 hover:text-black ${activeTab === 3 ? 'border-b-2 border-black' : ''}`} onClick={() => setActiveTab(3)}>Followers(19,453)</a>
+                                <a href="#list" className={`px-1 mx-4 my-2 py-4 text-gray-700 hover:text-black ${activeTab === 4 ? 'border-b-2 border-black' : ''}`} onClick={() => setActiveTab(4)}>Lists(1)</a>
+                                {userId === profileId && (
+                                    <a href="#drafts" className={`px-1 mx-4 my-2 py-4 text-gray-700 hover:text-black ${activeTab === 5 ? 'border-b-2 border-black' : ''}`} onClick={() => setActiveTab(5)}>Drafts(1)</a>
+                                )}
                             </div>
                         </div>
                         <div className="ml-4 mr-12 my-4 border-t border-gray-150"></div>
