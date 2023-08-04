@@ -4,6 +4,7 @@ import { useSearchParams } from 'react-router-dom';
 import PostViewComponent from '../components/PostViewComponent';
 import TopicsViewComponent from '../components/TopicsViewComponent';
 import ProfileViewComponent from '../components/ProfileViewComponent';
+import ListViewComponent from '../components/ListViewComponent';
 
 const Search = () => {
     const [searchParams, setSearchParams] = useSearchParams();
@@ -26,26 +27,42 @@ const Search = () => {
                                     <a href="#" className={`px-1 mx-4 my-2 py-4 text-gray-700 hover:text-black ${activeTab === 1 ? 'border-b-2 border-black' : ''}`} onClick={() => setActiveTab(1)}>Posts</a>
                                     <a href="#people" className={`px-1 mx-4 my-2 py-4 text-gray-700 hover:text-black ${activeTab === 2 ? 'border-b-2 border-black' : ''}`} onClick={() => setActiveTab(2)}>People</a>
                                     <a href="#topics" className={`px-1 mx-4 my-2 py-4 text-gray-700 hover:text-black ${activeTab === 3 ? 'border-b-2 border-black' : ''}`} onClick={() => setActiveTab(3)}>Topics</a>
+                                    <a href="#lists" className={`px-1 mx-4 my-2 py-4 text-gray-700 hover:text-black ${activeTab === 4 ? 'border-b-2 border-black' : ''}`} onClick={() => setActiveTab(4)}>Lists</a>
                                 </div>
                             </div>
                             <div className="ml-4 mr-12 my-4 border-t border-gray-150"></div>
                         </div>
                     )}
-                    <PostViewComponent />
-                    <PostViewComponent />
+                    {activeTab === 1 && (
+                        <PostViewComponent />
+                    )}
+                    {activeTab === 2 && (
+                        <ProfileViewComponent />
+                    )}
+                    {activeTab === 3 && (
+                        <TopicsViewComponent topicsList={['Topic 1', 'Topic 2', 'Topic 3', 'Topic 1', 'Topic 2', 'Topic 3', 'Topic 1', 'Topic 2', 'Topic 3']} />
+                    )}
+                    {activeTab === 4 && (
+                        <ListViewComponent />
+                    )}
                 </div>
                 <div style={{ width: '400px' }} className="mx-auto text-start">
                     {searchText !== '' && (
                         <div className='ml-8'>
-                            <h1 className="text-xl font-bold text-black mb-4">Topics matching {searchText}</h1>
-                            <TopicsViewComponent topicsList={['Mana', 'Manana', 'Man', 'Mana', 'Manana', 'Man', 'Mana']} />
-                            <a href="#topics" className='mt-8 py-4 text-green-500 hover:text-black' onClick={() => setActiveTab(3)}>See all</a>
-                            <div className="my-8 border-t border-gray-150"></div>
-                            <h1 className="text-xl font-bold text-black my-4">People matching {searchText}</h1>
-                            <ProfileViewComponent />
-                            <ProfileViewComponent />
-                            <ProfileViewComponent />
-                            <a href="#people" className='mt-8 py-4 text-green-500 hover:text-black' onClick={() => setActiveTab(2)}>See all</a>
+                            {activeTab !== 3 && (
+                                <div className='mb-8'>
+                                    <h1 className="text-xl font-bold text-black mb-4">Topics matching {searchText}</h1>
+                                    <TopicsViewComponent topicsList={['Mana', 'Manana', 'Man', 'Mana', 'Manana', 'Man', 'Mana']} />
+                                    <a href="#topics" className='mt-8 py-4 text-green-500 hover:text-black' onClick={() => setActiveTab(3)}>See all</a>
+                                </div>
+                            )}
+                            {activeTab !== 2 && (
+                                <div>
+                                    <h1 className="text-xl font-bold text-black mb-4">People matching {searchText}</h1>
+                                    {[...Array(3)].map((_, index) => <ProfileViewComponent key={index} />)}
+                                    <a href="#people" className='mt-8 py-4 text-green-500 hover:text-black' onClick={() => setActiveTab(2)}>See all</a>
+                                </div>
+                            )}
                         </div>
                     )}
                 </div>

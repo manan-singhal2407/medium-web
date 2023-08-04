@@ -12,14 +12,20 @@ import Search from "./presentation/screen/Search";
 import Profile from "./presentation/screen/Profile";
 import Topics from "./presentation/screen/Topics";
 import Lists from "./presentation/screen/Lists";
+import AllPosts from "./presentation/screen/AllPosts";
 
-// todo profile/search section have lists option with Reading List as fixed.
+// todo add comment & comment reply
+// todo edit profile
+// todo revision history
+// todo only view 1 post then show price cost
+// todo fix sorting issue likes and comments
 
 const router = createBrowserRouter([
 	{ path: "/", element: <Home /> },
 	{ path: "/login", element: <Login /> },
 	{ path: "/signup", element: <SignUp /> },
 	{ path: "/search", element: <Search /> },
+	{ path: "/allPosts", element: <AllPosts /> },
 	{ path: "/topic/:name", element: <Topics /> },
 	{ path: "/post/:id", element: <PostDetail /> },
 	{ path: "/profile/:id", element: <Profile /> },

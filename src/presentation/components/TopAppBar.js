@@ -146,6 +146,9 @@ const TopNavBar = ({ searchTextParam, fromDateParam, toDateParam, likesParam, co
             {isUserLoggedIn
                 ? <div className="flex items-center">
                     <div className="mr-6">
+                        <a href="/allPosts" className="text-black hover:text-blue-300">All Posts</a>
+                    </div>
+                    <div className="mr-6">
                         <a href="/new-story" className="text-black hover:text-blue-300">Add Post</a>
                     </div>
                     <div className="mr-6">
@@ -159,6 +162,9 @@ const TopNavBar = ({ searchTextParam, fromDateParam, toDateParam, likesParam, co
                     </div>
                 </div>
                 : <div className="flex items-center">
+                    <div className="mr-6">
+                        <a href="/allPosts" className="text-black hover:text-blue-300">All Posts</a>
+                    </div>
                     <div className="mr-6">
                         <a href="/login" className="text-black hover:text-blue-300">Login</a>
                     </div>
