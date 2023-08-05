@@ -1,18 +1,26 @@
+import { returnRandomPosts, returnRandomTopics } from "../dummy/DummyData";
+import PostEntity from "../model/PostEntity";
+
 export default class HomeRepositoryImpl {
-    async fetchHomePageInfoForUser() {
+    fetchHomePageInfoForUser() {
         const userId = localStorage.getItem("user_id");
-        // const response = await fetch(`https://www.omdbapi.com/?apikey=f1140859&s=${text}&page=${page}&y=${year}`);
-        // let movies = [];
-        // if (response.status === 200) {
-        //     const data = await response.json();
-        //     if (data.Response === 'True') {
-        //         for (const movie of data.Search) {
-        //             movies.push(new Movie(movie));
-        //         }
-        //     }
-        // } else {
-        //     alert("Request failed with status code: " + response.status);
-        // }
-        // return movies;
+        if (userId === undefined || userId === null) {
+            userId = '';
+        }
+
+        const trending = returnRandomPosts(6).map(data => new PostEntity(data));
+        const recommended = returnRandomPosts(10).map(data => new PostEntity(data));
+        const topics = returnRandomTopics(10);
+        return [trending, recommended, topics];
+    }
+
+    fetchMoreRecommendedPostForUser() {
+        const userId = localStorage.getItem("user_id");
+        if (userId === undefined || userId === null) {
+            userId = '';
+        }
+
+        const recommended = returnRandomPosts(10).map(data => new PostEntity(data));
+        return recommended;
     }
 }

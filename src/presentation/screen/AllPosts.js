@@ -1,25 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import TopNavBar from '../components/TopAppBar';
 import TopicsPostViewComponent from '../components/TopicsPostViewComponent';
+import PostRepositoryImpl from '../../data/repositories/PostRepositoryImpl';
 
 const AllPosts = () => {
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(false);
 
-    const fetchPostData = () => {
+    const fetchPostData = async () => {
         if (loading) return;
 
         setLoading(true);
         setTimeout(() => {
-            try {
-                const newData = ['More data', 'More data', 'More data', 'More data', 'More data', 'More data'];
-                const newPosts = [...posts, ...newData];
-                setPosts(newPosts);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
+            const postRepositoryImpl = new PostRepositoryImpl();
+            const data = postRepositoryImpl.getAllPosts();
+            setPosts([...posts, ...data]);
             setLoading(false);
-        }, 2000);
+        }, Math.floor(Math.random() * 1500) + 500);
     };
 
     useEffect(() => {
@@ -45,7 +42,7 @@ const AllPosts = () => {
                 <p className="text-4xl font-bold text-black">All Posts</p>
                 <p className="text-md mt-4 font-bold text-gray-500">Today  ·  2.14K Posts</p>
                 <div style={{ width: '1200px' }} className="mt-4 grid grid-cols-3 gap-4">
-                    {posts.map((_, index) => <TopicsPostViewComponent key={index} />)}
+                    {posts.map((post, index) => <TopicsPostViewComponent post={post} key={index} />)}
                 </div>
             </div>
         </div>

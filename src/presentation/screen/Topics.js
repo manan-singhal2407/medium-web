@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from "react-router-dom";
 import TopNavBar from '../components/TopAppBar';
 import TopicsPostViewComponent from '../components/TopicsPostViewComponent';
+import PostRepositoryImpl from '../../data/repositories/PostRepositoryImpl';
 
 const Topics = () => {
     const params = useParams();
@@ -9,21 +10,16 @@ const Topics = () => {
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(false);
 
-    const fetchPostData = () => {
+    const fetchPostData = async () => {
         if (loading) return;
 
         setLoading(true);
         setTimeout(() => {
-            try {
-                const newData = ['More data', 'More data', 'More data', 'More data', 'More data', 'More data'];
-                const newPosts = [...posts, ...newData];
-                console.log(newPosts.length);
-                setPosts(newPosts);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
+            const postRepositoryImpl = new PostRepositoryImpl();
+            const data = postRepositoryImpl.getPostsForTopic(topicName);
+            setPosts([...posts, ...data]);
             setLoading(false);
-        }, 2000);
+        }, Math.floor(Math.random() * 1500) + 500);
     };
 
     useEffect(() => {
@@ -50,7 +46,7 @@ const Topics = () => {
                 <p className="text-4xl font-bold text-black">{topicName}</p>
                 <p className="text-md mt-4 font-bold text-gray-500">Topic  ·  2.14M Posts</p>
                 <div style={{ width: '1200px' }} className="mt-4 grid grid-cols-3 gap-4">
-                    {posts.map((_, index) => <TopicsPostViewComponent key={index} />)}
+                    {posts.map((post, index) => <TopicsPostViewComponent post={post} key={index} />)}
                 </div>
             </div>
         </div>

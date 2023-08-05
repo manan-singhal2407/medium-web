@@ -3,16 +3,15 @@ import { useNavigate } from 'react-router-dom';
 import ic_like from '../../assets/images/ic_like.svg';
 import ic_liked from '../../assets/images/ic_liked.svg';
 
-const CommentViewComponent = ({ handleReplyClick }) => {
+const CommentViewComponent = ({ showReply, handleReplyClick }) => {
     const navigate = useNavigate();
 
     const handleUserClick = () => {
-        // todo replace with original profile id
-        navigate(`/profile/${1}`);
+        alert('Demo data');
     }
 
     const handleCommentLikeClick = () => {
-        // todo call API to set/remove from bookmark
+        alert('Call API');
     };
 
     return (
@@ -32,7 +31,7 @@ const CommentViewComponent = ({ handleReplyClick }) => {
                     <img className='cursor-pointer' src={false ? ic_liked : ic_like} alt='' onClick={handleCommentLikeClick} />
                     {1076}
                 </div>
-                {true && (
+                {showReply && (
                     <div className="flex items-center mr-6 text-black cursor-pointer font-bold" onClick={handleReplyClick}>
                         Reply
                     </div>

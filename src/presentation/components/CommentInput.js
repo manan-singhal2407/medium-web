@@ -6,7 +6,7 @@ const CommentsInput = ({ postId, commentId }) => {
 
     const handleSubmit = () => {
         if (comment.trim() !== '') {
-            // todo update API and send comment to database
+            alert('Call API');
         }
         setComment('');
     };

@@ -7,6 +7,7 @@ import TopicsViewComponent from '../components/TopicsViewComponent';
 import ProfileSideViewComponent from '../components/ProfileSideViewComponent';
 import ListViewComponent from '../components/ListViewComponent';
 import DraftViewComponent from '../components/DraftViewComponent';
+import PostRepositoryImpl from '../../data/repositories/PostRepositoryImpl';
 
 const Profile = () => {
     const params = useParams();
@@ -16,12 +17,12 @@ const Profile = () => {
     const [activeTab, setActiveTab] = useState(1);
 
     const fetchProfileInfo = async () => {
-
+        
     };
 
     useEffect(() => {
-        setUserId(localStorage.getItem('user_id') === null || localStorage.getItem('user_id') === '' ? '' : localStorage.getItem('user_id'));
-        fetchProfileInfo();
+        // setUserId(localStorage.getItem('user_id') === null || localStorage.getItem('user_id') === '' ? '' : localStorage.getItem('user_id'));
+        // fetchProfileInfo();
     }, []);
 
     return (
