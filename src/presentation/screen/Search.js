@@ -1,16 +1,48 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import TopNavBar from '../components/TopAppBar';
 import { useSearchParams } from 'react-router-dom';
 import PostViewComponent from '../components/PostViewComponent';
 import TopicsViewComponent from '../components/TopicsViewComponent';
 import ProfileViewComponent from '../components/ProfileViewComponent';
 import ListViewComponent from '../components/ListViewComponent';
+import PostRepositoryImpl from '../../data/repositories/PostRepositoryImpl';
 
 const Search = () => {
     const [searchParams, setSearchParams] = useSearchParams();
     const searchText = searchParams.get('q');
 
     const [activeTab, setActiveTab] = useState(1);
+
+    const [posts, setPosts] = useState([]);
+    const [loading, setLoading] = useState(false);
+
+    const fetchPostData = async () => {
+        if (loading) return;
+
+        setLoading(true);
+        setTimeout(() => {
+            const postRepositoryImpl = new PostRepositoryImpl();
+            const data = postRepositoryImpl.getAllPosts();
+            setPosts([...posts, ...data]);
+            setLoading(false);
+        }, Math.floor(Math.random() * 1500) + 1000);
+    };
+
+    useEffect(() => {
+        fetchPostData();
+    }, []);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            if ((window.innerHeight + window.scrollY) >= document.documentElement.scrollHeight && activeTab === 1) {
+                fetchPostData();
+            }
+        };
+        window.addEventListener('scroll', handleScroll);
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+        };
+    }, [fetchPostData]);
 
     return (
         <div className="flex-col items-top justify-center h-screen w-screen">
@@ -34,20 +66,22 @@ const Search = () => {
                         </div>
                     )}
                     {activeTab === 1 && (
-                        <PostViewComponent />
+                        // [...Array(10)].map((_, index) => (<ListViewComponent key={index} />))
+                        // <PostViewComponent />
+                        posts.map((post, index) => <PostViewComponent post={post} key={index} />)
                     )}
                     {activeTab === 2 && (
-                        <ProfileViewComponent />
+                        [...Array(10)].map((_, index) => (<ProfileViewComponent key={index} />))
                     )}
                     {activeTab === 3 && (
-                        <TopicsViewComponent topicsList={['Topic 1', 'Topic 2', 'Topic 3', 'Topic 1', 'Topic 2', 'Topic 3', 'Topic 1', 'Topic 2', 'Topic 3']} />
+                        <TopicsViewComponent topicsList={['Mana', 'Manana', 'Man', 'Mana', 'Manana', 'Man', 'Mana', 'Topic 1', 'Topic 2', 'Topic 3', 'Topic 1', 'Topic 2', 'Topic 3', 'Topic 1', 'Topic 2', 'Topic 3']} />
                     )}
                     {activeTab === 4 && (
-                        <ListViewComponent />
+                        [...Array(10)].map((_, index) => (<ListViewComponent key={index} />))
                     )}
                 </div>
                 <div style={{ width: '400px' }} className="mx-auto text-start">
-                    {searchText !== '' && (
+                    {searchText !== '' && posts.length !== 0 && (
                         <div className='ml-8'>
                             {activeTab !== 3 && (
                                 <div className='mb-8'>

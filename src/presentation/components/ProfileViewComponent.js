@@ -6,12 +6,11 @@ const ProfileViewComponent = () => {
     const navigate = useNavigate();
 
     const handleUserClick = () => {
-        // todo replace with original profile id
-        navigate(`/profile/${1}`);
+        navigate(`/profile/${22}`);
     }
 
     const handleFollowClick = () => {
-        // todo call API to set/remove from follow
+        alert('Call API');
     };
 
     return (

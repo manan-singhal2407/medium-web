@@ -3,11 +3,12 @@ import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import React, { useState, useEffect } from 'react';
 import TopNavBarEditor from '../components/TopAppBarEditor';
 import { useParams } from 'react-router-dom';
+import PostRepositoryImpl from '../../data/repositories/PostRepositoryImpl';
 
 const NewStory = () => {
     const params = useParams();
-    const postId = params.postId;
-    const isEditingPost = postId !== undefined && postId !== null && postId !== '';
+    let postId = params.id;
+    let isEditingPost = postId !== undefined;
 
     const [title, setTitle] = useState('');
     const [selectedImage, setSelectedImage] = useState(null);
@@ -33,22 +34,29 @@ const NewStory = () => {
     };
 
     const sendDataToDatabase = () => {
-        console.log('API Called');
-
+        alert('call API');
         // todo on success
+        if (!isEditingPost) {
+            postId = 100;
+            isEditingPost = true;
+        }
         if (isEditingPost) {
             window.history.replaceState({}, '', `/p/${postId}`);
-            setTextShowingSavingHistory('Saving...');
+            setTextShowingSavingHistory('Saved');
         }
     };
 
     const handleOnPublish = () => {
-        // call API
+        alert('call API');
     };
 
     useEffect(() => {
         if (isEditingPost) {
-            // call API to fetch info
+            const postRepositoryImpl = new PostRepositoryImpl();
+            const data = postRepositoryImpl.getPostById(postId);
+            setTitle(data[0].title);
+            setTopic(data[0].topics);
+            setData(data[0].text);
         }
     }, []);
 

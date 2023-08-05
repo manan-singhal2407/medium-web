@@ -30,7 +30,6 @@ const PostDetail = () => {
             const data = postRepositoryImpl.getPostById(postId);
             setPost(data[0]);
             setUserPosts([...userPosts, ...data[1]]);
-            console.log(data[1].length);
         }, Math.floor(Math.random() * 1500) + 500);
     };
 
