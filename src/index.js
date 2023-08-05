@@ -15,7 +15,6 @@ import Lists from "./presentation/screen/Lists";
 import AllPosts from "./presentation/screen/AllPosts";
 
 // todo revision history
-// todo only view 1 post then show price stripe
 
 const router = createBrowserRouter([
 	{ path: "/", element: <Home /> },

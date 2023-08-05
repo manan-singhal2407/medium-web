@@ -5,11 +5,11 @@ import ic_close from '../../assets/images/ic_close.svg';
 
 const TopNavBar = ({ searchTextParam, fromDateParam, toDateParam, likesParam, commentsParam }) => {
     const navigate = useNavigate();
-    const [searchText, setSearchText] = useState(searchTextParam);
-    const [fromDate, setFromDate] = useState(fromDateParam);
-    const [toDate, setToDate] = useState(toDateParam);
-    const [likesRange, setLikesRange] = useState(likesParam);
-    const [commentsRange, setCommentsRange] = useState(commentsParam);
+    const [searchText, setSearchText] = useState(searchTextParam === undefined ? '' : searchTextParam);
+    const [fromDate, setFromDate] = useState(fromDateParam === undefined ? '' : fromDateParam);
+    const [toDate, setToDate] = useState(toDateParam === undefined ? '' : toDateParam);
+    const [likesRange, setLikesRange] = useState(likesParam === undefined ? '' : likesParam);
+    const [commentsRange, setCommentsRange] = useState(commentsParam === undefined ? '' : commentsParam);
     const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
     const [userId, setUserId] = useState(false);
     const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
@@ -23,7 +23,7 @@ const TopNavBar = ({ searchTextParam, fromDateParam, toDateParam, likesParam, co
         } else {
             navigate({
                 pathname: '/search',
-                search: `?q=${searchText}`,
+                search: `?q=${searchText}&fromDate=${fromDate}&toDate=${toDate}&likes=${likesRange}&comments=${commentsRange}`,
             });
         }
         setFromDate('');

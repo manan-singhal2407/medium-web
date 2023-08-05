@@ -1520,7 +1520,7 @@ const dummyProfile = [
     },
     {
         user_id: 11,
-        user_name: 'LoganWilson',
+        user_name: 'Logan Wilson',
         user_image: 'logan_wilson.jpg',
         bio: 'Venturing into the world of technology and unraveling its mysteries.',
         post_count: 20,

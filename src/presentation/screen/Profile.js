@@ -53,7 +53,7 @@ const Profile = () => {
                             </div>
                             <div className="ml-4 mr-12 my-4 border-t border-gray-150"></div>
                             {activeTab === 1 && (
-                                <PostViewComponent post={dummyPost[0]} />
+                                <PostViewComponent post={dummyPost[4]} />
                                 // userPosts.map((post, index) => (<PostViewComponent post={post} key={index} />))
                             )}
                             {activeTab === 2 && (
