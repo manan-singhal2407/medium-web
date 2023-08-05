@@ -14,7 +14,6 @@ import Topics from "./presentation/screen/Topics";
 import Lists from "./presentation/screen/Lists";
 import AllPosts from "./presentation/screen/AllPosts";
 
-// todo edit profile
 // todo revision history
 // todo only view 1 post then show price stripe
 

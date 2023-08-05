@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import { PrimaryButton, SecondaryButton } from './atom/AppButton';
-import ic_close from '../../assets/images/ic_close.svg'
+import ic_close from '../../assets/images/ic_close.svg';
 
 const TopNavBar = ({ searchTextParam, fromDateParam, toDateParam, likesParam, commentsParam }) => {
     const navigate = useNavigate();
