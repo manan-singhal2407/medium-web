@@ -45,7 +45,7 @@ const Profile = () => {
                                     <a href="#" className={`px-1 mx-4 my-2 py-4 text-gray-700 hover:text-black ${activeTab === 1 ? 'border-b-2 border-black' : ''}`} onClick={() => setActiveTab(1)}>Posts({profile.post_count})</a>
                                     <a href="#following" className={`px-1 mx-4 my-2 py-4 text-gray-700 hover:text-black ${activeTab === 2 ? 'border-b-2 border-black' : ''}`} onClick={() => setActiveTab(2)}>Following({profile.following_count})</a>
                                     <a href="#followers" className={`px-1 mx-4 my-2 py-4 text-gray-700 hover:text-black ${activeTab === 3 ? 'border-b-2 border-black' : ''}`} onClick={() => setActiveTab(3)}>Followers({profile.followers_count})</a>
-                                    <a href="#list" className={`px-1 mx-4 my-2 py-4 text-gray-700 hover:text-black ${activeTab === 4 ? 'border-b-2 border-black' : ''}`} onClick={() => setActiveTab(4)}>Lists({profile.lists_count})</a>
+                                    <a href="#list" className={`px-1 mx-4 my-2 py-4 text-gray-700 hover:text-black ${activeTab === 4 ? 'border-b-2 border-black' : ''}`} onClick={() => setActiveTab(4)}>Lists({profile.lists_count + 1})</a>
                                     {userId === profileId && (
                                         <a href="#drafts" className={`px-1 mx-4 my-2 py-4 text-gray-700 hover:text-black ${activeTab === 5 ? 'border-b-2 border-black' : ''}`} onClick={() => setActiveTab(5)}>Drafts({profile.draft_count})</a>
                                     )}
@@ -63,10 +63,15 @@ const Profile = () => {
                                 [...Array(10)].map((_, index) => (<ProfileViewComponent key={index} />))
                             )}
                             {activeTab === 4 && (
-                                [...Array(profile.lists_count)].map((_, index) => (<ListViewComponent key={index} />))
+                                <div>
+                                    {userId === profileId && (
+                                        <ListViewComponent user_name={profile.user_name} name='Reading List' key={0} />
+                                    )}
+                                    {[...Array(profile.lists_count)].map((_, index) => (<ListViewComponent user_name={profile.user_name} key={index} />))}
+                                </div>
                             )}
                             {activeTab === 5 && (
-                                [...Array(profile.draft_count)].map((_, index) => (<DraftViewComponent key={index} />))
+                                [...Array(profile.drasft_count)].map((_, index) => (<DraftViewComponent key={index} />))
                             )}
                         </div>
                     </div>

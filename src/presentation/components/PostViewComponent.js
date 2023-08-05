@@ -70,10 +70,10 @@ const PostViewComponent = ({ post }) => {
                     </div>
                     <div className="ml-auto flex items-center mr-6">
                         <img className='cursor-pointer' src={post.is_user_bookmark ? ic_bookmark_selected : ic_bookmark} alt='' onClick={handleBookmarkClick} />
-                        {post.user_id === userId && (
+                        {post.user_id.toString() === userId && (
                             <img className='mx-2 cursor-pointer' onClick={handleEditClick} src={ic_edit} alt='' />
                         )}
-                        {post.user_id === userId && (
+                        {post.user_id.toString() === userId && (
                             <img className='cursor-pointer' onClick={handleDeleteClick} src={ic_delete} alt='' />
                         )}
                     </div>

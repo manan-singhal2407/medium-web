@@ -3,7 +3,7 @@ import PostEntity from "../model/PostEntity";
 
 export default class HomeRepositoryImpl {
     fetchHomePageInfoForUser() {
-        const userId = localStorage.getItem("user_id");
+        let userId = localStorage.getItem("user_id");
         if (userId === undefined || userId === null) {
             userId = '';
         }
@@ -15,7 +15,7 @@ export default class HomeRepositoryImpl {
     }
 
     fetchMoreRecommendedPostForUser() {
-        const userId = localStorage.getItem("user_id");
+        let userId = localStorage.getItem("user_id");
         if (userId === undefined || userId === null) {
             userId = '';
         }

@@ -25,7 +25,7 @@ const Home = () => {
 
     const fetchHomePageData = () => {
         const homeRepository = new HomeRepositoryImpl();
-        const data = homeRepository.fetchHomePageInfoForUser();
+        let data = homeRepository.fetchHomePageInfoForUser();
         setTrendingPost([...trendingPost, ...data[0]]);
         setRecommendedPost([...recommendedPost, ...data[1]]);
         setTopics([...topics, ...data[2]]);

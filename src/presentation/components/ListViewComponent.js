@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import ic_private from '../../assets/images/ic_private.svg';
 
-const ListViewComponent = () => {
+const ListViewComponent = ({ user_name, name }) => {
     const navigate = useNavigate();
 
     const handleListClick = () => {
@@ -17,11 +17,11 @@ const ListViewComponent = () => {
                     <div className="w-6 h-6 bg-gray-400 rounded-full">
                         <img className="w-full h-full object-cover rounded-full" src='image_url' alt='' />
                     </div>
-                    <h2 className="line-clamp-1 ml-2 text-black">Nick Hilton</h2>
+                    <h2 className="line-clamp-1 ml-2 text-black">{user_name === undefined ? 'Nick Hilton' : user_name}</h2>
                 </div>
-                <h2 className="text-xl font-bold line-clamp-1 mr-4 ml-8 mt-2">List Name</h2>
+                <h2 className="text-xl font-bold line-clamp-1 mr-4 ml-8 mt-2">{name === undefined ? 'ListName' : name}</h2>
                 <div className="flex items-center ml-8 mb-8">
-                    <h2 className="text-md line-clamp-1 mr-4">3 posts</h2>
+                    <h2 className="text-md line-clamp-1 mr-4">6 posts</h2>
                     {true && (
                         <img src={ic_private} alt='' />
                     )}

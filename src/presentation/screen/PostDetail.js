@@ -14,6 +14,7 @@ import TopicsPostViewComponent from '../components/TopicsPostViewComponent';
 import CommentViewComponent from '../components/CommentViewComponent';
 import CommentsInput from '../components/CommentInput';
 import PostRepositoryImpl from '../../data/repositories/PostRepositoryImpl';
+import StripePayment from '../components/StripePayment';
 
 const PostDetail = () => {
     const navigate = useNavigate();
@@ -21,6 +22,7 @@ const PostDetail = () => {
     const postId = params.id;
     const [userId, setUserId] = useState('');
     const [post, setPost] = useState(null);
+    const [showPayment, setShowPayment] = useState(false);
     const [userPosts, setUserPosts] = useState([]);
     const [commentId, setCommentId] = useState('');
 
@@ -30,6 +32,35 @@ const PostDetail = () => {
             const data = postRepositoryImpl.getPostById(postId);
             setPost(data[0]);
             setUserPosts([...userPosts, ...data[1]]);
+
+            let viewList = localStorage.getItem('post');
+            if (viewList === undefined || viewList === null) {
+                viewList = 0;
+                localStorage.setItem('post', viewList);
+            }
+            let exist = false;
+            for (let i = 0; i < viewList.length; i++) {
+                console.log(viewList[i]);
+                if (viewList[i] === data[0].post_id) {
+                    exist = true;
+                }
+            }
+            if (!exist) {
+                let totalCount = localStorage.getItem('count');
+                if (totalCount === undefined || totalCount === null) {
+                    totalCount = 2;
+                    localStorage.setItem('count', totalCount);
+                }
+                if (totalCount > viewList) {
+                    viewList++;
+                    localStorage.setItem('post', viewList);
+                    setShowPayment(false);
+                } else {
+                    setShowPayment(true);
+                }
+            }
+
+            console.log(localStorage.getItem('post') + " - " + localStorage.getItem('count'));
         }, Math.floor(Math.random() * 1500) + 500);
     };
 
@@ -101,36 +132,54 @@ const PostDetail = () => {
                         </div>
                         <div className="ml-auto flex items-center mr-6">
                             <img className='cursor-pointer' src={post.is_user_bookmark ? ic_bookmark_selected : ic_bookmark} alt='' onClick={handleBookmarkClick} />
-                            {post.user_id === userId && (
+                            {post.user_id.toString() === userId && (
                                 <img className='mx-2 cursor-pointer' onClick={handleEditClick} src={ic_edit} alt='' />
                             )}
-                            {post.user_id === userId && (
+                            {post.user_id.toString() === userId && (
                                 <img className='cursor-pointer' onClick={handleDeleteClick} src={ic_delete} alt='' />
                             )}
                         </div>
                     </div>
                     <div className="mx-auto my-4 border-t border-gray-150 w-600"></div>
                     <img className="w-full h-80 object-cover my-4 bg-gray-150" src={post.image} alt='' />
-                    <p className="text-lg">{post.text}</p>
-                    <CommentsInput postId='1' commentId='3' />
-                    {post.comments_count !== 0 && (
-                        <div>
-                            <p className="text-lg font-bold text-black mt-8">Comments({post.comments_count})</p>
-                            {[...Array(3)].map((_, index) => (
-                                <div key={index}>
-                                    <CommentViewComponent showReply={true} handleReplyClick={() => { setCommentId(index) }} />
-                                    {[...Array(1)].map((_, commentIndex) => (
-                                        <div className='ml-16' key={commentIndex}>
-                                            {commentIndex === 0 && index === commentId && (
-                                                <CommentsInput postId='1' commentId='3' />
-                                            )}
-                                            <CommentViewComponent showReply={false} />
+
+                    {showPayment === true ? userId !== '' ? <div className="flex justify-center items-center bg-gray-150">
+                        <div className="w-full h-80 px-32 bg-gray-150 flex items-center">
+                            <p className="text-lg">You need to pay to view more posts</p>
+                            <StripePayment
+                                name={'Your Company Name'}
+                                description={'Item that you sold'}
+                                amount={5.00}
+                            />
+                        </div>
+                    </div> : <div className="flex justify-center items-center bg-gray-150">
+                        <div className="w-full h-80 px-32 bg-gray-150 flex items-center">
+                            <p className="text-lg">You need to pay to view more posts</p>
+                            <PrimaryButton text='Login' onClickHandle={() => { navigate('/login') }} />
+                        </div>
+                    </div>
+                        : <div>
+                            <p className="text-lg">{post.text}</p>
+                            <CommentsInput postId='1' commentId='3' />
+                            {post.comments_count !== 0 && (
+                                <div>
+                                    <p className="text-lg font-bold text-black mt-8">Comments({post.comments_count})</p>
+                                    {[...Array(3)].map((_, index) => (
+                                        <div key={index}>
+                                            <CommentViewComponent showReply={true} handleReplyClick={() => { setCommentId(index) }} />
+                                            {[...Array(1)].map((_, commentIndex) => (
+                                                <div className='ml-16' key={commentIndex}>
+                                                    {commentIndex === 0 && index === commentId && (
+                                                        <CommentsInput postId='1' commentId='3' />
+                                                    )}
+                                                    <CommentViewComponent showReply={false} />
+                                                </div>
+                                            ))}
                                         </div>
                                     ))}
                                 </div>
-                            ))}
-                        </div>
-                    )}
+                            )}</div>}
+
                     {userPosts.length !== 0 && (
                         <div>
                             <p className="text-lg font-bold text-black mt-16">More from UserName</p>

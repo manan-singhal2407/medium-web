@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 
 const TrendingPostComponent = ({ post }) => {
     const navigate = useNavigate();
-    console.log(post);
 
     const handleUserClick = () => {
         navigate(`/profile/${post.user_id}`);

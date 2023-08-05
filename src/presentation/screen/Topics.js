@@ -29,7 +29,7 @@ const Topics = () => {
     useEffect(() => {
         const handleScroll = () => {
             if ((window.innerHeight + window.scrollY) >= document.documentElement.scrollHeight) {
-                console.log("Bottom");
+
                 fetchPostData();
             }
         };
