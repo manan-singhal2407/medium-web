@@ -149,6 +149,8 @@ const TopNavBar = ({ searchTextParam, fromDateParam, toDateParam, likesParam, co
                     <div>
                         <a href="" className="text-black hover:text-blue-300" onClick={() => {
                             localStorage.removeItem('user_id');
+                            localStorage.removeItem('user_token');
+                            localStorage.removeItem('user_name');
                             navigate('/');
                         }}>Logout</a>
                     </div>

@@ -3,6 +3,56 @@ import PostEntity from "../model/PostEntity";
 import ProfileEntity from "../model/ProfileEntity";
 
 export default class ProfileRepositoryImpl {
+    async followUser(userId) {
+        const formData = new FormData();
+        formData.append('token', localStorage.getItem('user_token'));
+        formData.append('author_id', userId);
+
+        try {
+            const response = await fetch(`http://localhost:3000/follow-user`, {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.status === 200) {
+                const data = await response.json();
+                if (data.status === 200) {
+                    if (data.msg === 'Successfully followed!') {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        } catch (error) {
+            return false;
+        }
+    }
+
+    async unfollowUser(userId) {
+        const formData = new FormData();
+        formData.append('token', localStorage.getItem('user_token'));
+        formData.append('author_id', userId);
+
+        try {
+            const response = await fetch(`http://localhost:3000/unfollow-user`, {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.status === 200) {
+                const data = await response.json();
+                if (data.status === 200) {
+                    if (data.msg === 'Successfully followed!') {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        } catch (error) {
+            return false;
+        }
+    }
+
     getProfileById(profileId) {
         const posts = dummyPost.map(data => new PostEntity(data));
         const profiles = dummyProfile.map(data => new ProfileEntity(data));

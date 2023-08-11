@@ -4,18 +4,22 @@ import React, { useState, useEffect } from 'react';
 import TopNavBarEditor from '../components/TopAppBarEditor';
 import { useParams } from 'react-router-dom';
 import PostRepositoryImpl from '../../data/repositories/PostRepositoryImpl';
+import Toast from '../components/atom/Toast';
 
 const NewStory = () => {
     const params = useParams();
     let postId = params.id;
     let isEditingPost = postId !== undefined;
 
+    const [toast, setToast] = useState('');
     const [title, setTitle] = useState('');
-    const [selectedImage, setSelectedImage] = useState(null);
+    const [selectedImage, setSelectedImage] = useState('');
     const [topic, setTopic] = useState('');
     const [data, setData] = useState('');
     const [lastEdited, setLastEdited] = useState(null);
     const [textShowingSavingHistory, setTextShowingSavingHistory] = useState('');
+
+    console.log(localStorage.getItem('user_token'));
 
     const handleEditorChange = (e, editor) => {
         setData(editor.getData());
@@ -34,20 +38,35 @@ const NewStory = () => {
     };
 
     const sendDataToDatabase = () => {
-        alert('call API');
+        // alert('call API');
         // todo on success
-        if (!isEditingPost) {
-            postId = 100;
-            isEditingPost = true;
-        }
-        if (isEditingPost) {
-            window.history.replaceState({}, '', `/p/${postId}`);
-            setTextShowingSavingHistory('Saved');
-        }
+        // if (!isEditingPost) {
+        //     postId = 100;
+        //     isEditingPost = true;
+        // }
+        // if (isEditingPost) {
+        //     window.history.replaceState({}, '', `/p/${postId}`);
+        //     setTextShowingSavingHistory('Saved');
+        // }
     };
 
-    const handleOnPublish = () => {
-        alert('call API');
+    const handleOnPublish = async () => {
+        setTextShowingSavingHistory('Publishing...');
+        const postRepositoryImpl = new PostRepositoryImpl();
+        const post_id = await postRepositoryImpl.publishPostToDatabase(title, topic, selectedImage, data);
+        if (post_id !== -1) {
+            postId = post_id;
+            isEditingPost = true;
+            window.history.replaceState({}, '', `/p/${postId}`);
+            setTextShowingSavingHistory('Published');
+            setToast("Post published");
+        } else {
+            setTextShowingSavingHistory('Failed');
+            setToast("Something went wrong");
+        }
+        setTimeout(() => {
+            setToast('');
+        }, 4000);
     };
 
     useEffect(() => {
@@ -74,6 +93,9 @@ const NewStory = () => {
 
     return (
         <div className="flex flex-col h-screen w-screen">
+            {toast !== '' && (
+                <Toast message="Something went wrong" />
+            )}
             <TopNavBarEditor textShowingSavingHistory={textShowingSavingHistory} showRevisionHistoryIcon={isEditingPost} onClickPublishButton={handleOnPublish} />
             <div style={{ width: '800px', height: '100%' }} className='mx-auto mt-4 pb-16'>
                 <input
@@ -98,7 +120,7 @@ const NewStory = () => {
                             onChange={handleImageSelect}
                             className="hidden"
                         />
-                        {selectedImage ? (
+                        {selectedImage !== '' ? (
                             <img src={selectedImage} alt="Selected" className="w-full h-full object-cover" />
                         ) : (
                             <span className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">

@@ -5,8 +5,8 @@ export const ProtectedRoute = () => {
     const navigate = useNavigate();
     useEffect(() => {
         try {
-            if (localStorage.getItem('user_id') === null || localStorage.getItem('user_id') === '') {
-                // navigate("/login");
+            if (localStorage.getItem('user_token') === null || localStorage.getItem('user_token') === '') {
+                navigate("/login");
             }
         } catch (err) {
             navigate("/login");

@@ -1,16 +1,27 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PrimaryButton, SecondaryButton } from './atom/AppButton';
+import ProfileRepositoryImpl from '../../data/repositories/ProfileRepositoryImpl';
 
-const ProfileViewComponent = () => {
+const ProfileViewComponent = ({ profile }) => {
+    const [isUserFollowing, setIsUserFollowing] = useState(profile.is_user_following);
+
     const navigate = useNavigate();
 
     const handleUserClick = () => {
-        navigate(`/profile/${22}`);
+        navigate(`/profile/${profile.user_id}`);
     }
 
-    const handleFollowClick = () => {
-        alert('Call API');
+    const handleFollowClick = async () => {
+        const profileRepositoryImpl = new ProfileRepositoryImpl();
+        const success = await profileRepositoryImpl.followUser(profile.user_id);
+        setIsUserFollowing(success);
+    };
+
+    const handleUnfollowClick = async () => {
+        const profileRepositoryImpl = new ProfileRepositoryImpl();
+        const success = await profileRepositoryImpl.unfollowUser(profile.user_id);
+        setIsUserFollowing(!success);
     };
 
     return (
@@ -20,16 +31,15 @@ const ProfileViewComponent = () => {
                     <img className="w-full h-full object-cover rounded-full" src='image_url' alt='' />
                 </div>
                 <div className="flex flex-col ml-4 flex-1 cursor-pointer" onClick={handleUserClick}>
-                    <h2 className="font-bold line-clamp-1">User Name</h2>
-                    <p className="pr-4 line-clamp-2">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                    <h2 className="font-bold line-clamp-1">{profile.user_name}</h2>
+                    <p className="pr-4 line-clamp-2">{profile.bio}</p>
                 </div>
                 <div className="ml-auto mr-16">
-                    {true && true && (
-                        // todo 1st true if userId !== profileId
+                    {localStorage.getItem('user_id') !== profile.user_id.toString() && !isUserFollowing && (
                         <PrimaryButton text='Follow' onClickHandle={handleFollowClick} />
                     )}
-                    {true && false && (
-                        <SecondaryButton text='Following' onClickHandle={handleFollowClick} />
+                    {localStorage.getItem('user_id') !== profile.user_id.toString() && isUserFollowing && (
+                        <SecondaryButton text='Following' onClickHandle={handleUnfollowClick} />
                     )}
                 </div>
             </div>

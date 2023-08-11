@@ -20,10 +20,9 @@ export const SignUp = () => {
     const signupUserWith = async (name, email, password) => {
         const authRepositoryImpl = new AuthRepositoryImpl();
         const message = await authRepositoryImpl.signupUserWithEmailAndPassword(name, email, password);
-        if (message === 'success') {
-            navigate('/login');
-        } else {
+        if (message !== 'SUCCESS') {
             alert(message);
+        } else {
             navigate('/');
         }
     };

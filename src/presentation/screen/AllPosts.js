@@ -11,29 +11,27 @@ const AllPosts = () => {
         if (loading) return;
 
         setLoading(true);
-        setTimeout(() => {
-            const postRepositoryImpl = new PostRepositoryImpl();
-            const data = postRepositoryImpl.getAllPosts();
-            setPosts([...posts, ...data]);
-            setLoading(false);
-        }, Math.floor(Math.random() * 1500) + 500);
+        const postRepositoryImpl = new PostRepositoryImpl();
+        const data = postRepositoryImpl.getAllPosts();
+        setPosts([...posts, ...data]);
+        setLoading(false);
     };
 
     useEffect(() => {
         fetchPostData();
     }, []);
 
-    useEffect(() => {
-        const handleScroll = () => {
-            if ((window.innerHeight + window.scrollY) >= document.documentElement.scrollHeight) {
-                fetchPostData();
-            }
-        };
-        window.addEventListener('scroll', handleScroll);
-        return () => {
-            window.removeEventListener('scroll', handleScroll);
-        };
-    }, [fetchPostData]);
+    // useEffect(() => {
+    //     const handleScroll = () => {
+    //         if ((window.innerHeight + window.scrollY) >= document.documentElement.scrollHeight) {
+    //             fetchPostData();
+    //         }
+    //     };
+    //     window.addEventListener('scroll', handleScroll);
+    //     return () => {
+    //         window.removeEventListener('scroll', handleScroll);
+    //     };
+    // }, [fetchPostData]);
 
     return (
         <div className="flex flex-col h-screen w-screen">

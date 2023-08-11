@@ -4,6 +4,7 @@ import TopNavBar from '../components/TopAppBar';
 import TrendingPostComponent from '../components/TrendingPostComponent';
 import PostViewComponent from '../components/PostViewComponent';
 import TopicsViewComponent from '../components/TopicsViewComponent';
+import PostRepositoryImpl from '../../data/repositories/PostRepositoryImpl';
 
 const Home = () => {
     const [trendingPost, setTrendingPost] = useState([]);
@@ -24,6 +25,10 @@ const Home = () => {
     };
 
     const fetchHomePageData = () => {
+        console.log("called");
+        const postRepository = new PostRepositoryImpl();
+        postRepository.getTopPostsForUser();
+
         const homeRepository = new HomeRepositoryImpl();
         let data = homeRepository.fetchHomePageInfoForUser();
         setTrendingPost([...trendingPost, ...data[0]]);

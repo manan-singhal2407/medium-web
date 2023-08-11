@@ -5,7 +5,7 @@ import PostViewComponent from '../components/PostViewComponent';
 import TopicsViewComponent from '../components/TopicsViewComponent';
 import ProfileViewComponent from '../components/ProfileViewComponent';
 import ListViewComponent from '../components/ListViewComponent';
-import PostRepositoryImpl from '../../data/repositories/PostRepositoryImpl';
+import SearchRepositoryImpl from '../../data/repositories/SearchRepositoryImpl';
 
 const Search = () => {
     const [searchParams, setSearchParams] = useSearchParams();
@@ -14,35 +14,42 @@ const Search = () => {
     const [activeTab, setActiveTab] = useState(1);
 
     const [posts, setPosts] = useState([]);
+    const [profiles, setProfiles] = useState([]);
+    const [topics, setTopics] = useState([]);
     const [loading, setLoading] = useState(false);
 
     const fetchPostData = async () => {
         if (loading) return;
 
         setLoading(true);
-        setTimeout(() => {
-            const postRepositoryImpl = new PostRepositoryImpl();
-            const data = postRepositoryImpl.getAllPosts();
-            setPosts([...posts, ...data]);
-            setLoading(false);
-        }, Math.floor(Math.random() * 1500) + 1000);
+        const searchRepositoryImpl = new SearchRepositoryImpl();
+        const postList = await searchRepositoryImpl.searchPostUsingKeyword(searchText);
+        setPosts([...posts, ...postList]);
+
+        const profileList = await searchRepositoryImpl.searchAuthorUsingKeyword(searchText);
+        setProfiles([...profiles, ...profileList]);
+
+        const topicsList = await searchRepositoryImpl.searchTopicsUsingKeyword(searchText);
+        setTopics([...topics, ...topicsList]);
+
+        setLoading(false);
     };
 
     useEffect(() => {
         fetchPostData();
     }, []);
 
-    useEffect(() => {
-        const handleScroll = () => {
-            if ((window.innerHeight + window.scrollY) >= document.documentElement.scrollHeight && activeTab === 1) {
-                fetchPostData();
-            }
-        };
-        window.addEventListener('scroll', handleScroll);
-        return () => {
-            window.removeEventListener('scroll', handleScroll);
-        };
-    }, [fetchPostData]);
+    // useEffect(() => {
+    //     const handleScroll = () => {
+    //         if ((window.innerHeight + window.scrollY) >= document.documentElement.scrollHeight && activeTab === 1) {
+    //             fetchPostData();
+    //         }
+    //     };
+    //     window.addEventListener('scroll', handleScroll);
+    //     return () => {
+    //         window.removeEventListener('scroll', handleScroll);
+    //     };
+    // }, [fetchPostData]);
 
     return (
         <div className="flex-col items-top justify-center h-screen w-screen">
@@ -66,15 +73,13 @@ const Search = () => {
                         </div>
                     )}
                     {activeTab === 1 && (
-                        // [...Array(10)].map((_, index) => (<ListViewComponent key={index} />))
-                        // <PostViewComponent />
                         posts.map((post, index) => <PostViewComponent post={post} key={index} />)
                     )}
                     {activeTab === 2 && (
-                        [...Array(10)].map((_, index) => (<ProfileViewComponent key={index} />))
+                        profiles.map((profile, index) => (<ProfileViewComponent profile={profile} key={index} />))
                     )}
                     {activeTab === 3 && (
-                        <TopicsViewComponent topicsList={['Mana', 'Manana', 'Man', 'Mana', 'Manana', 'Man', 'Mana', 'Topic 1', 'Topic 2', 'Topic 3', 'Topic 1', 'Topic 2', 'Topic 3', 'Topic 1', 'Topic 2', 'Topic 3']} />
+                        <TopicsViewComponent topicsList={topics} />
                     )}
                     {activeTab === 4 && (
                         [...Array(10)].map((_, index) => (<ListViewComponent key={index} />))
@@ -86,14 +91,14 @@ const Search = () => {
                             {activeTab !== 3 && (
                                 <div className='mb-8'>
                                     <h1 className="text-xl font-bold text-black mb-4">Topics matching {searchText}</h1>
-                                    <TopicsViewComponent topicsList={['Mana', 'Manana', 'Man', 'Mana', 'Manana', 'Man', 'Mana']} />
+                                    <TopicsViewComponent topicsList={topics.slice(0, 6)} />
                                     <a href="#topics" className='mt-8 py-4 text-green-500 hover:text-black' onClick={() => setActiveTab(3)}>See all</a>
                                 </div>
                             )}
                             {activeTab !== 2 && (
                                 <div>
                                     <h1 className="text-xl font-bold text-black mb-4">People matching {searchText}</h1>
-                                    {[...Array(3)].map((_, index) => <ProfileViewComponent key={index} />)}
+                                    {profiles.slice(0, 3).map((profile, index) => <ProfileViewComponent profile={profile} key={index} />)}
                                     <a href="#people" className='mt-8 py-4 text-green-500 hover:text-black' onClick={() => setActiveTab(2)}>See all</a>
                                 </div>
                             )}

@@ -1,25 +1,24 @@
 export default class AuthRepositoryImpl {
     async signupUserWithEmailAndPassword(name, email, password) {
-        const userData = {
-            user: {
-                name: name,
-                email: email,
-                password: password,
-                password_confirmation: password
-            }
-        };
+        const formData = new FormData();
+        formData.append('email', email);
+        formData.append('password', password);
         try {
-            const response = await fetch('http://127.0.0.1:3000/users', {
+            const response = await fetch('http://127.0.0.1:3000/sign-up', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(userData)
+                body: formData
             });
-            if (response.status === 201) {
-                return "success";
-            } else if (response.status === 422) {
-                return "This email account has been already in use";
+            
+            if (response.status === 200) {
+                const data = await response.json();
+                if (data.status === 200) {
+                    localStorage.setItem('user_token', data.userDetails.token);
+                    localStorage.setItem('user_id', data.userDetails.id);
+                    localStorage.setItem('user_name', data.userDetails.username);
+                    return "SUCCESS";
+                } else {
+                    return data.msg;
+                }
             } else {
                 return "Something Went Wrong";
             }
@@ -29,25 +28,25 @@ export default class AuthRepositoryImpl {
     }
 
     async loginUserWithEmailAndPassword(email, password) {
-        const userData = {
-            email: email,
-            password: password,
-        };
+        const formData = new FormData();
+        formData.append('email', email);
+        formData.append('password', password);
         try {
-            const response = await fetch('http://127.0.0.1:3000/sessions', {
+            const response = await fetch('http://127.0.0.1:3000/login', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(userData)
+                body: formData
             });
+            
             if (response.status === 200) {
                 const data = await response.json();
-                localStorage.setItem('user_id', data.data.id);
-                localStorage.setItem('user_name', data.data.name);
-                return "success";
-            } else if (response.status === 422) {
-                return "Invalid email or password";
+                if (data.status === 200) {
+                    localStorage.setItem('user_token', data.userDetails.token);
+                    localStorage.setItem('user_id', data.userDetails.id);
+                    localStorage.setItem('user_name', data.userDetails.username);
+                    return "SUCCESS";
+                } else {
+                    return data.msg;
+                }
             } else {
                 return "Something Went Wrong";
             }
