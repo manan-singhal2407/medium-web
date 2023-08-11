@@ -57,10 +57,8 @@ export default class SearchRepositoryImpl {
                 method: 'GET'
             });
             
-            console.log(response.status);
             if (response.status === 200) {
                 const data = await response.json();
-                console.log(data);
                 if (data.status === 200) {
                     const profileSearchEntities = [];
                     for (const profile of data.authorsList) {

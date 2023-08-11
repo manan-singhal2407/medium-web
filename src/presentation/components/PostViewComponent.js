@@ -8,10 +8,15 @@ import ic_bookmark from '../../assets/images/ic_bookmark.svg';
 import ic_bookmark_selected from '../../assets/images/ic_bookmark_selected.svg';
 import ic_edit from '../../assets/images/ic_edit.svg';
 import ic_delete from '../../assets/images/ic_delete.svg';
+import PostRepositoryImpl from '../../data/repositories/PostRepositoryImpl';
 
 const PostViewComponent = ({ post }) => {
     const navigate = useNavigate();
     const [userId, setUserId] = useState('');
+    const [isDeleted, setIsDeleted] = useState(false);
+    const [isUserLiked, setIsUserLiked] = useState(post.is_user_liked);
+    const [likesCount, setLikesCount] = useState(post.likes_count);
+    const [isUserBookmark, setIsUserBookmark] = useState(post.is_user_bookmark);
 
     const handleUserClick = () => {
         navigate(`/profile/${post.user_id}`);
@@ -21,26 +26,54 @@ const PostViewComponent = ({ post }) => {
         navigate(`/post/${post.post_id}`);
     }
 
-    const handleLikeClick = () => {
-        alert('Call API');
+    const handleLikeClick = async () => {
+        const postRepositoryImpl = new PostRepositoryImpl();
+        if (isUserLiked) {
+            const success = await postRepositoryImpl.dislikePostById(post.post_id);
+            if (success) {
+                setIsUserLiked(false);
+                setLikesCount(likesCount-1);
+            }
+        } else {
+            const success = await postRepositoryImpl.likePostById(post.post_id);
+            if (success) {
+                setIsUserLiked(true);
+                setLikesCount(likesCount+1);
+            }
+        }
     };
 
-    const handleBookmarkClick = () => {
-        alert('Call API');
+    const handleBookmarkClick = async () => {
+        const postRepositoryImpl = new PostRepositoryImpl();
+        if (isUserBookmark) {
+            
+        } else {
+            const success = await postRepositoryImpl.addPostToBoookmarkById(post.post_id);
+            if (success) {
+                setIsUserBookmark(true);
+            }
+        }
     };
 
     const handleEditClick = () => {
         navigate(`/p/${post.post_id}`);
     };
 
-    const handleDeleteClick = () => {
-        alert('Call API');
+    const handleDeleteClick = async () => {
+        const postRepositoryImpl = new PostRepositoryImpl();
+        const success = await postRepositoryImpl.deletePostById(post.post_id);
+        if (success) {
+            setIsDeleted(true);
+        }
     };
 
     useEffect(() => {
         setUserId(localStorage.getItem('user_id') === null || localStorage.getItem('user_id') === '' ? '' : localStorage.getItem('user_id'));
     }, []);
 
+    if (isDeleted) {
+        return (<div></div>);
+    }
     return (
         <div className="flex items-center ml-4 mt-4 mb-16">
             <div className="flex flex-col flex-1 pr-4">
@@ -61,15 +94,15 @@ const PostViewComponent = ({ post }) => {
                         {post.views_count}
                     </div>
                     <div className="flex items-center mr-6 cursor-pointer">
-                        <img className='cursor-pointer' src={post.is_user_liked ? ic_liked : ic_like} alt='' onClick={handleLikeClick} />
-                        {post.likes_count}
+                        <img className='cursor-pointer' src={isUserLiked ? ic_liked : ic_like} alt='' onClick={handleLikeClick} />
+                        {likesCount}
                     </div>
                     <div className="flex items-center mr-6 text-black">
                         <img className='mr-0.5' src={ic_comment} alt='' />
                         {post.comments_count}
                     </div>
                     <div className="ml-auto flex items-center mr-6">
-                        <img className='cursor-pointer' src={post.is_user_bookmark ? ic_bookmark_selected : ic_bookmark} alt='' onClick={handleBookmarkClick} />
+                        <img className='cursor-pointer' src={isUserBookmark ? ic_bookmark_selected : ic_bookmark} alt='' onClick={handleBookmarkClick} />
                         {post.user_id.toString() === userId && (
                             <img className='mx-2 cursor-pointer' onClick={handleEditClick} src={ic_edit} alt='' />
                         )}

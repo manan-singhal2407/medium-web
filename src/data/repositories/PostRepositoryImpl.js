@@ -26,7 +26,7 @@ export default class PostRepositoryImpl {
             if (response.status === 200) {
                 const data = await response.json();
                 if (data.status === 200) {
-                    
+
                     console.log(data.post);
                 }
             }
@@ -69,6 +69,109 @@ export default class PostRepositoryImpl {
             return [];
         }
     }
+
+    async likePostById(postId) {
+        const formData = new FormData();
+        formData.append('token', localStorage.getItem('user_token'));
+        formData.append('post_id', postId);
+
+        try {
+            const response = await fetch(`http://localhost:3000/like-post`, {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.status === 200) {
+                const data = await response.json();
+                if (data.status === 200) {
+                    if (data.msg === 'Liked!') {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        } catch (error) {
+            return false;
+        }
+    }
+
+    async dislikePostById(postId) {
+        const formData = new FormData();
+        formData.append('token', localStorage.getItem('user_token'));
+        formData.append('post_id', postId);
+
+        try {
+            const response = await fetch(`http://localhost:3000/unlike-post`, {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.status === 200) {
+                const data = await response.json();
+                if (data.status === 200) {
+                    if (data.msg === 'UnLiked!') {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        } catch (error) {
+            return false;
+        }
+    }
+
+    async deletePostById(postId) {
+        const formData = new FormData();
+        formData.append('token', localStorage.getItem('user_token'));
+        formData.append('post_id', postId);
+
+        try {
+            const response = await fetch(`http://localhost:3000/delete-post`, {
+                method: 'DELETE',
+                body: formData
+            });
+
+            if (response.status === 200) {
+                const data = await response.json();
+                if (data.status === 200) {
+                    if (data.msg === 'Post successfully deleted!') {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        } catch (error) {
+            return false;
+        }
+    }
+
+    async addPostToBoookmarkById(postId) {
+        const formData = new FormData();
+        formData.append('token', localStorage.getItem('user_token'));
+        formData.append('post_id', postId);
+
+        try {
+            const response = await fetch(`http://localhost:3000/add-to-save-laters`, {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.status === 200) {
+                const data = await response.json();
+                if (data.status === 200) {
+                    if (data.msg === 'Saved your post') {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        } catch (error) {
+            return false;
+        }
+    }
+
+
+
 
 
     async publishPostToDatabase(title, topic, image, text) {
