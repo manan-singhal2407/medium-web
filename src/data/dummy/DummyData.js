@@ -1,3 +1,5 @@
+import ListsBookmarkEntity from "../model/ListsBookmarkEntity";
+
 const dummyPost = [
     {
         user_id: 7,
@@ -1875,4 +1877,13 @@ const returnRandomPosts = (count) => {
     return postList;
 }
 
-export { dummyPost, dummyProfile, returnRandomPosts, returnRandomTopics };
+const returnRandomList = (count) => {
+    const listsBookmarkEntity = [];
+    for (let i = 0; i < count; i++) {
+        listsBookmarkEntity.push(new ListsBookmarkEntity(i+1));
+    }
+
+    return listsBookmarkEntity;
+}
+
+export { dummyPost, dummyProfile, returnRandomPosts, returnRandomTopics, returnRandomList };

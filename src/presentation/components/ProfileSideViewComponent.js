@@ -1,15 +1,19 @@
 import React, { useState } from 'react';
 import { PrimaryButton, SecondaryButton } from './atom/AppButton';
 import ic_close from '../../assets/images/ic_close.svg';
+import ProfileRepositoryImpl from '../../data/repositories/ProfileRepositoryImpl';
 
-const ProfileSideViewComponent = ({ profile, sessionId }) => {
+const ProfileSideViewComponent = ({ profile, handleDataChange }) => {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [file, setFile] = useState('');
     const [name, setName] = useState(profile.user_name);
     const [bio, setBio] = useState(profile.bio);
     const [selectedImage, setSelectedImage] = useState(null);
+    const [isUserFollowing, setIsUserFollowing] = useState(profile.is_user_following);
 
     const handleImageSelect = (event) => {
         const file = event.target.files[0];
+        setFile(file);
         if (file) {
             const reader = new FileReader();
             reader.onloadend = () => {
@@ -19,12 +23,31 @@ const ProfileSideViewComponent = ({ profile, sessionId }) => {
         }
     };
 
-    const handleFollowClick = () => {
-        alert('Call API');
+    const handleFollowClick = async () => {
+        const profileRepositoryImpl = new ProfileRepositoryImpl();
+        const success = await profileRepositoryImpl.followUser(profile.user_id);
+        if (success) {
+            setIsUserFollowing(true);
+            handleDataChange();
+        }
     };
 
-    const handleUpdateClick = () => {
-        alert('Call API');
+    const handleUnfollowClick = async () => {
+        const profileRepositoryImpl = new ProfileRepositoryImpl();
+        const success = await profileRepositoryImpl.unfollowUser(profile.user_id);
+        if (success) {
+            setIsUserFollowing(false);
+            handleDataChange();
+        }
+    };
+
+    const handleUpdateClick = async () => {
+        const profileRepositoryImpl = new ProfileRepositoryImpl();
+        const success = await profileRepositoryImpl.uploadUserProfile(name, bio, file);
+        if (success) {
+            setIsEditModalOpen(false);
+            handleDataChange();
+        }
     };
 
     return (
@@ -34,7 +57,7 @@ const ProfileSideViewComponent = ({ profile, sessionId }) => {
             </div>
             <h2 className="font-bold line-clamp-1 ml-4 mt-4 text-xl">{profile.user_name}</h2>
             <p className="pr-4 ml-4 mt-2 mb-4 mr-12">{profile.bio}</p>
-            {profile.user_id.toString() === sessionId && (
+            {localStorage.getItem('user_id') === profile.user_id.toString() && (
                 <PrimaryButton text='Edit Profile' onClickHandle={() => setIsEditModalOpen(true)} />
             )}
             {isEditModalOpen && (
@@ -100,11 +123,11 @@ const ProfileSideViewComponent = ({ profile, sessionId }) => {
                     </div>
                 </div>
             )}
-            {profile.user_id.toString() !== sessionId && !profile.is_user_following && (
+            {localStorage.getItem('user_id') !== profile.user_id.toString() && !isUserFollowing && (
                 <PrimaryButton text='Follow' onClickHandle={handleFollowClick} />
             )}
-            {profile.user_id.toString() !== sessionId && profile.is_user_following && (
-                <SecondaryButton text='Following' onClickHandle={handleFollowClick} />
+            {localStorage.getItem('user_id') !== profile.user_id.toString() && isUserFollowing && (
+                <SecondaryButton text='Following' onClickHandle={handleUnfollowClick} />
             )}
         </div>
     );

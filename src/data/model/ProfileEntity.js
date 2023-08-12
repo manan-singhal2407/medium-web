@@ -1,15 +1,15 @@
 export default class ProfileEntity {
     constructor(data) {
-        this.user_id = data.user_id;
-        this.user_name = data.user_name;
-        this.user_image = data.user_image;
-        this.bio = data.bio;
-        this.post_count = data.post_count;
-        this.created_at = data.created_at;
+        this.user_id = data.id;
+        this.user_name = data.username;
+        this.user_image = data.profile_pic_url;
+        this.bio = data.about;
+        this.post_count = 0;
+        this.created_at = 'NA';
         this.followers_count = data.followers_count;
         this.following_count = data.following_count;
-        this.lists_count = data.lists_count;
-        this.draft_count = data.draft_count;
-        this.is_user_following = data.is_user_following;
+        this.lists_count = 0;
+        this.draft_count = 0;
+        this.is_user_following = false;
     }
 }

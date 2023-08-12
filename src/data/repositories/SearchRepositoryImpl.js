@@ -1,3 +1,4 @@
+import ListsBookmarkEntity from "../model/ListsBookmarkEntity";
 import PostSearchEntity from "../model/PostSearchEntity";
 import ProfileSearchEntity from "../model/ProfileSearchEntity";
 import TopicsEntity from "../model/TopicsEntity";

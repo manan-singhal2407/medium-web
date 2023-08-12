@@ -1,4 +1,7 @@
 import { dummyPost, returnRandomPosts } from "../dummy/DummyData";
+import DraftEntity from "../model/DraftEntity";
+import ListsBookmarkEntity from "../model/ListsBookmarkEntity";
+import ListsEntity from "../model/ListsEntity";
 import PostEntity from "../model/PostEntity";
 
 export default class PostRepositoryImpl {
@@ -62,6 +65,29 @@ export default class PostRepositoryImpl {
                 const data = await response.json();
                 if (data.status === 200) {
                     console.log(data);
+                }
+            }
+            return [];
+        } catch (error) {
+            return [];
+        }
+    }
+
+    async getCurrentUserPosts() {
+        try {
+            const response = await fetch(`http://127.0.0.1:3000/view-my-posts?token=${localStorage.getItem('user_token')}`, {
+                method: 'GET'
+            });
+            if (response.status === 200) {
+                const data = await response.json();
+                if (data.status === 200) {
+                    const postEntities = [];
+                    for (const post of data.posts) {
+                        const postEntity = new PostEntity(post);
+                        postEntities.push(postEntity);
+                    }
+
+                    return postEntities;
                 }
             }
             return [];
@@ -167,6 +193,117 @@ export default class PostRepositoryImpl {
             return false;
         } catch (error) {
             return false;
+        }
+    }
+
+    async getBoookmarkInfoAsList() {
+        try {
+            const response = await fetch(`http://localhost:3000/get-save-laters?token=${localStorage.getItem('user_token')}`, {
+                method: 'GET'
+            });
+
+            if (response.status === 200) {
+                const data = await response.json();
+                if (data.status === 200) {
+                    return new ListsBookmarkEntity(data.savelaters.length);
+                }
+            }
+            return [false, null];
+        } catch (error) {
+            return [false, null];
+        }
+    }
+
+    async getAllPostFromBoookmark() {
+        // try {
+        //     const response = await fetch(`http://localhost:3000/get-save-laters?token=${localStorage.getItem('user_token')}`, {
+        //         method: 'GET'
+        //     });
+
+        //     if (response.status === 200) {
+        //         const data = await response.json();
+        //         if (data.status === 200) {
+        //             if (data.msg === 'Saved your post') {
+        //                 return true;
+        //             }
+        //         }
+        //     }
+        //     return 0;
+        // } catch (error) {
+        //     return 0;
+        // }
+    }
+
+    async addPostToDraft(postId) {
+        const formData = new FormData();
+        formData.append('token', localStorage.getItem('user_token'));
+        formData.append('post_id', postId);
+
+        try {
+            const response = await fetch(`http://localhost:3000/add-to-drafts`, {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.status === 200) {
+                const data = await response.json();
+                if (data.status === 200) {
+                    if (data.msg === 'Added to Drafts') {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        } catch (error) {
+            return false;
+        }
+    }
+
+    async deleteDraftWithId(draftId) {
+        const formData = new FormData();
+        formData.append('token', localStorage.getItem('user_token'));
+        formData.append('draft_id', draftId);
+
+        try {
+            const response = await fetch(`http://localhost:3000/remove-from-drafts`, {
+                method: 'DELETE',
+                body: formData
+            });
+
+            if (response.status === 200) {
+                const data = await response.json();
+                if (data.status === 200) {
+                    if (data.msg === 'Removed from Drafts') {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        } catch (error) {
+            return false;
+        }
+    }
+
+    async getAllDrafts() {
+        try {
+            const response = await fetch(`http://localhost:3000/get-drafts?token=${localStorage.getItem('user_token')}`, {
+                method: 'GET'
+            });
+
+            if (response.status === 200) {
+                const data = await response.json();
+                if (data.status === 200) {
+                    const draftEntities = [];
+                    for (const draft of data.drafts) {
+                        const draftEntity = new DraftEntity(draft);
+                        draftEntities.push(draftEntity);
+                    }
+                    return draftEntities;
+                }
+            }
+            return [];
+        } catch (error) {
+            return [];
         }
     }
 

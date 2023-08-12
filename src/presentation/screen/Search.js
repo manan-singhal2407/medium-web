@@ -6,6 +6,7 @@ import TopicsViewComponent from '../components/TopicsViewComponent';
 import ProfileViewComponent from '../components/ProfileViewComponent';
 import ListViewComponent from '../components/ListViewComponent';
 import SearchRepositoryImpl from '../../data/repositories/SearchRepositoryImpl';
+import { returnRandomList } from '../../data/dummy/DummyData';
 
 const Search = () => {
     const [searchParams, setSearchParams] = useSearchParams();
@@ -82,7 +83,7 @@ const Search = () => {
                         <TopicsViewComponent topicsList={topics} />
                     )}
                     {activeTab === 4 && (
-                        [...Array(10)].map((_, index) => (<ListViewComponent key={index} />))
+                        returnRandomList(10).map((list, index) => (<ListViewComponent list={list} key={index} />))
                     )}
                 </div>
                 <div style={{ width: '400px' }} className="mx-auto text-start">

@@ -15,13 +15,17 @@ const ProfileViewComponent = ({ profile }) => {
     const handleFollowClick = async () => {
         const profileRepositoryImpl = new ProfileRepositoryImpl();
         const success = await profileRepositoryImpl.followUser(profile.user_id);
-        setIsUserFollowing(success);
+        if (success) {
+            setIsUserFollowing(true);
+        }
     };
 
     const handleUnfollowClick = async () => {
         const profileRepositoryImpl = new ProfileRepositoryImpl();
         const success = await profileRepositoryImpl.unfollowUser(profile.user_id);
-        setIsUserFollowing(!success);
+        if (success) {
+            setIsUserFollowing(false);
+        }
     };
 
     return (
