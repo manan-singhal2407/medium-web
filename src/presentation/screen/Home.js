@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import HomeRepositoryImpl from '../../data/repositories/HomeRepositoryImpl';
 import TopNavBar from '../components/TopAppBar';
 import TrendingPostComponent from '../components/TrendingPostComponent';
 import PostViewComponent from '../components/PostViewComponent';
 import TopicsViewComponent from '../components/TopicsViewComponent';
 import PostRepositoryImpl from '../../data/repositories/PostRepositoryImpl';
+import { returnRandomTopics } from '../../data/dummy/DummyData';
 
 const Home = () => {
     const [trendingPost, setTrendingPost] = useState([]);
@@ -16,24 +16,18 @@ const Home = () => {
         if (isLoading) return;
 
         setLoading(true);
-        setTimeout(() => {
-            const homeRepository = new HomeRepositoryImpl();
-            const data = homeRepository.fetchMoreRecommendedPostForUser();
-            setRecommendedPost([...recommendedPost, ...data]);
-            setLoading(false);
-        }, Math.floor(Math.random() * 1500) + 500);
+        const postRepository = new PostRepositoryImpl();
+        const recommendationPost = await postRepository.getRecommendationPostForUser();
+        setRecommendedPost([...recommendedPost, ...recommendationPost]);
+        setLoading(false);
     };
 
-    const fetchHomePageData = () => {
-        console.log("called");
+    const fetchHomePageData = async () => {
         const postRepository = new PostRepositoryImpl();
-        postRepository.getTopPostsForUser();
-
-        const homeRepository = new HomeRepositoryImpl();
-        let data = homeRepository.fetchHomePageInfoForUser();
-        setTrendingPost([...trendingPost, ...data[0]]);
-        setRecommendedPost([...recommendedPost, ...data[1]]);
-        setTopics([...topics, ...data[2]]);
+        const topPost = await postRepository.getTopPostsForUser();
+        const recommendationPost = await postRepository.getRecommendationPostForUser();
+        setTrendingPost([...trendingPost, ...topPost.slice(0, 6)]);
+        setRecommendedPost([...recommendedPost, ...recommendationPost]);
     };
 
     useEffect(() => {
@@ -67,7 +61,7 @@ const Home = () => {
                         <div style={{ height: '10px' }}></div>
                     </div>
                     <div style={{ width: '400px' }} className="mx-auto text-start">
-                        <TopicsViewComponent topicsList={topics} />
+                        <TopicsViewComponent topicsList={returnRandomTopics(10)} />
                     </div>
                 </div>
             </div>

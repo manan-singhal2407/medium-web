@@ -1,10 +1,10 @@
-import PostEntity from "./PostEntity";
+import PostHomeEntity from "./PostHomeEntity";
 
 export default class ListPostsEntity {
     constructor(data) {
         const postEntities = [];
         for (const post of data.posts) {
-            const postEntity = new PostEntity(post.postDetails);
+            const postEntity = new PostHomeEntity(post.postDetails);
             postEntities.push(postEntity);
         }
 

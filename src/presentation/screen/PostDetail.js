@@ -15,6 +15,7 @@ import CommentViewComponent from '../components/CommentViewComponent';
 import CommentsInput from '../components/CommentInput';
 import PostRepositoryImpl from '../../data/repositories/PostRepositoryImpl';
 import StripePayment from '../components/StripePayment';
+import { returnRandomPosts } from '../../data/dummy/DummyData';
 
 const PostDetail = () => {
     const navigate = useNavigate();
@@ -26,40 +27,45 @@ const PostDetail = () => {
     const [userPosts, setUserPosts] = useState([]);
     const [commentId, setCommentId] = useState('');
 
+    const [isUserLiked, setIsUserLiked] = useState(null);
+    const [likesCount, setLikesCount] = useState(null);
+    const [isUserBookmark, setIsUserBookmark] = useState(null);
+
     const fetchPostUsingId = async () => {
         const postRepositoryImpl = new PostRepositoryImpl();
         const data = await postRepositoryImpl.getPostById(postId);
         setPost(data);
+        setIsUserLiked(data.is_user_liked);
+        setLikesCount(data.likes_count);
+        setIsUserBookmark(data.is_user_bookmark);
 
-        console.log(localStorage.getItem('user_id'));
-        console.log(data.user_id);
 
-        // let viewList = localStorage.getItem('post');
-        // if (viewList === undefined || viewList === null) {
-        //     viewList = 0;
-        //     localStorage.setItem('post', viewList);
-        // }
-        // let exist = false;
-        // for (let i = 0; i < viewList.length; i++) {
-        //     console.log(viewList[i]);
-        //     if (viewList[i] === data[0].post_id) {
-        //         exist = true;
-        //     }
-        // }
-        // if (!exist) {
-        //     let totalCount = localStorage.getItem('count');
-        //     if (totalCount === undefined || totalCount === null) {
-        //         totalCount = 2;
-        //         localStorage.setItem('count', totalCount);
-        //     }
-        //     if (totalCount > viewList) {
-        //         viewList++;
-        //         localStorage.setItem('post', viewList);
-        //         setShowPayment(false);
-        //     } else {
-        //         setShowPayment(true);
-        //     }
-        // }
+        let viewList = localStorage.getItem('post');
+        if (viewList === undefined || viewList === null) {
+            viewList = 0;
+            localStorage.setItem('post', viewList);
+        }
+        let exist = false;
+        for (let i = 0; i < viewList.length; i++) {
+            console.log(viewList[i]);
+            if (viewList[i] === data.post_id) {
+                exist = true;
+            }
+        }
+        if (!exist) {
+            let totalCount = localStorage.getItem('count');
+            if (totalCount === undefined || totalCount === null) {
+                totalCount = 2;
+                localStorage.setItem('count', totalCount);
+            }
+            if (totalCount > viewList) {
+                viewList++;
+                localStorage.setItem('post', viewList);
+                setShowPayment(false);
+            } else {
+                setShowPayment(true);
+            }
+        }
     };
 
     useEffect(() => {
@@ -75,20 +81,45 @@ const PostDetail = () => {
         alert('Call API');
     };
 
-    const handleLikeClick = () => {
-        alert('Call API');
+    const handleLikeClick = async () => {
+        const postRepositoryImpl = new PostRepositoryImpl();
+        if (isUserLiked) {
+            const success = await postRepositoryImpl.dislikePostById(post.post_id);
+            if (success) {
+                setIsUserLiked(false);
+                setLikesCount(likesCount-1);
+            }
+        } else {
+            const success = await postRepositoryImpl.likePostById(post.post_id);
+            if (success) {
+                setIsUserLiked(true);
+                setLikesCount(likesCount+1);
+            }
+        }
     };
 
-    const handleBookmarkClick = () => {
-        alert('Call API');
+    const handleBookmarkClick = async () => {
+        const postRepositoryImpl = new PostRepositoryImpl();
+        if (isUserBookmark) {
+            alert('No such API');
+        } else {
+            const success = await postRepositoryImpl.addPostToBoookmarkById(post.post_id);
+            if (success) {
+                setIsUserBookmark(true);
+            }
+        }
     };
 
     const handleEditClick = () => {
         navigate(`/p/${post.post_id}`);
     };
 
-    const handleDeleteClick = () => {
-        alert('Call API');
+    const handleDeleteClick = async () => {
+        const postRepositoryImpl = new PostRepositoryImpl();
+        const success = await postRepositoryImpl.deletePostById(post.post_id);
+        if (success) {
+            navigate('/');
+        }
     };
 
     return (
@@ -121,15 +152,15 @@ const PostDetail = () => {
                             {post.views_count}
                         </div>
                         <div className="flex items-center mr-6 curson-pointer">
-                            <img className='cursor-pointer' src={post.is_user_liked ? ic_liked : ic_like} alt='' onClick={handleLikeClick} />
-                            {post.likes_count}
+                            <img className='cursor-pointer' src={isUserLiked ? ic_liked : ic_like} alt='' onClick={handleLikeClick} />
+                            {likesCount}
                         </div>
                         <div className="flex items-center mr-6 text-black">
                             <img className='mr-0.5' src={ic_comment} alt='' />
                             {post.comments_count}
                         </div>
                         <div className="ml-auto flex items-center mr-6">
-                            <img className='cursor-pointer' src={post.is_user_bookmark ? ic_bookmark_selected : ic_bookmark} alt='' onClick={handleBookmarkClick} />
+                            <img className='cursor-pointer' src={isUserBookmark ? ic_bookmark_selected : ic_bookmark} alt='' onClick={handleBookmarkClick} />
                             {localStorage.getItem('user_id') === post.user_id.toString() && (
                                 <img className='mx-2 cursor-pointer' onClick={handleEditClick} src={ic_edit} alt='' />
                             )}
@@ -158,19 +189,19 @@ const PostDetail = () => {
                     </div>
                         : <div>
                             <p className="text-lg">{post.text}</p>
-                            <CommentsInput postId='1' commentId='3' />
-                            {post.comments_count !== 0 && (
+                            <CommentsInput postId={post.post_id} commentId='-1' handleAddComment={fetchPostUsingId} />
+                            {post.commentList.length !== 0 && (
                                 <div>
-                                    <p className="text-lg font-bold text-black mt-8">Comments({post.comments_count})</p>
-                                    {[...Array(3)].map((_, index) => (
+                                    <p className="text-lg font-bold text-black mt-8">Comments({post.commentList.length})</p>
+                                    {post.commentList.map((comment, index) => (
                                         <div key={index}>
-                                            <CommentViewComponent showReply={true} handleReplyClick={() => { setCommentId(index) }} />
+                                            <CommentViewComponent comment={comment} showReply={true} handleReplyClick={() => { setCommentId(index) }} />
                                             {[...Array(1)].map((_, commentIndex) => (
                                                 <div className='ml-16' key={commentIndex}>
                                                     {commentIndex === 0 && index === commentId && (
-                                                        <CommentsInput postId='1' commentId='3' />
+                                                        <CommentsInput postId={post.post_id} commentId={comment.comment_id} />
                                                     )}
-                                                    <CommentViewComponent showReply={false} />
+                                                    <CommentViewComponent comment={comment} showReply={false} handleAddComment={fetchPostUsingId} />
                                                 </div>
                                             ))}
                                         </div>
@@ -178,11 +209,12 @@ const PostDetail = () => {
                                 </div>
                             )}</div>}
 
-                    {userPosts.length !== 0 && (
+                    {true && (
+                        // userPosts.length !== 0
                         <div>
-                            <p className="text-lg font-bold text-black mt-16">More from UserName</p>
+                            <p className="text-lg font-bold text-black mt-16">More from {post.user_name}</p>
                             <div className="grid grid-cols-2 gap-4">
-                                {userPosts.map((post, index) => <TopicsPostViewComponent post={post} key={index} />)}
+                                {returnRandomPosts(6).map((post, index) => <TopicsPostViewComponent post={post} key={index} />)}
                             </div>
                         </div>
                     )}

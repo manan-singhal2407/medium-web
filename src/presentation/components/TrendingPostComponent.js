@@ -23,7 +23,7 @@ const TrendingPostComponent = ({ post }) => {
                         <h2 className="line-clamp-1 ml-4 text-black">{post.user_name}</h2>
                     </div>
                     <h2 className="text-xl font-bold line-clamp-3 cursor-pointer" onClick={handleTitleClick}>{post.title}</h2>
-                    <p className="mt-2 text-xs text-gray-500">{post.time_read} · {post.last_updated_at.substring(0, 10)}</p>
+                    <p className="mt-2 text-xs text-gray-500">{post.time_read} · {post.created_at.substring(0, 10)}</p>
                 </div>
             </div>
         </div>

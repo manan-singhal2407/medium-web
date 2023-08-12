@@ -25,6 +25,7 @@ export default class PostByIdEntity {
         this.last_updated_at = 'NA';
         this.likes_count = data.likes_count;
         this.comments_count = data.comments_count;
+        this.commentList = commentList;
         this.views_count = data.views_count;
         this.time_read = `${data.readingMinutes} min`;
         this.is_user_following = false;

@@ -1,3 +1,4 @@
+import ListPostsEntity from "../model/ListPostsEntity";
 import ListsEntity from "../model/ListsEntity";
 
 export default class ListRepositoryImpl {
@@ -103,6 +104,20 @@ export default class ListRepositoryImpl {
     }
 
     async getPostsOfList(listId) {
-        alert(listId);
+        try {
+            const response = await fetch(`http://localhost:3000/get-list?token=${localStorage.getItem('user_token')}&list_id=${listId}`, {
+                method: 'GET'
+            });
+
+            if (response.status === 200) {
+                const data = await response.json();
+                if (data.status === 200) {
+                    return new ListPostsEntity(data.list);
+                }
+            }
+            return [];
+        } catch (error) {
+            return [];
+        }
     }
 }

@@ -3,11 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import ic_like from '../../assets/images/ic_like.svg';
 import ic_liked from '../../assets/images/ic_liked.svg';
 
-const CommentViewComponent = ({ showReply, handleReplyClick }) => {
+const CommentViewComponent = ({ comment, showReply, handleReplyClick }) => {
     const navigate = useNavigate();
 
     const handleUserClick = () => {
-        alert('Demo data');
+        navigate(`/profile/${comment.user_id}`);
     }
 
     const handleCommentLikeClick = () => {
@@ -21,11 +21,11 @@ const CommentViewComponent = ({ showReply, handleReplyClick }) => {
                     <img className="w-full h-full object-cover rounded-full" src='image_url' alt='' />
                 </div>
                 <div className="flex flex-col ml-4 flex-1">
-                    <h2 className="text-md font-bold line-clamp-1 cursor-pointer" onClick={handleUserClick}>User Name</h2>
-                    <p className="pr-4 line-clamp-1">5 months ago</p>
+                    <h2 className="text-md font-bold line-clamp-1 cursor-pointer" onClick={handleUserClick}>{comment.user_name}</h2>
+                    <p className="pr-4 line-clamp-1">Posted at {comment.created_at.slice(11, 16)} on {comment.created_at.slice(0, 10)}</p>
                 </div>
             </div>
-            <p className="mr-16 mt-4">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+            <p className="mr-16 mt-4">{comment.message}</p>
             <div className="flex items-center text-sm text-gray-500 mt-4">
                 <div className="flex items-center mr-6 cursor-pointer">
                     <img className='cursor-pointer' src={false ? ic_liked : ic_like} alt='' onClick={handleCommentLikeClick} />

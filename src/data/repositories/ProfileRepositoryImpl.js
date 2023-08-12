@@ -86,7 +86,7 @@ export default class ProfileRepositoryImpl {
             if (response.status === 200) {
                 const data = await response.json();
                 if (data.status === 200) {
-                    if (data.msg === 'Successfully followed!') {
+                    if (data.msg === 'Successfully unfollowed!') {
                         return true;
                     }
                 }

@@ -1,9 +1,11 @@
 import { dummyPost, returnRandomPosts } from "../dummy/DummyData";
 import DraftEntity from "../model/DraftEntity";
+import ListBookmarkPostsEntity from "../model/ListBookmarkPostsEntity";
 import ListsBookmarkEntity from "../model/ListsBookmarkEntity";
 import ListsEntity from "../model/ListsEntity";
 import PostByIdEntity from "../model/PostByIdEntity";
 import PostEntity from "../model/PostEntity";
+import PostHomeEntity from "../model/PostHomeEntity";
 
 export default class PostRepositoryImpl {
     async createNewPostToUser(title, topic, image, text) {
@@ -48,7 +50,13 @@ export default class PostRepositoryImpl {
             if (response.status === 200) {
                 const data = await response.json();
                 if (data.status === 200) {
-                    console.log(data);
+                    const postHomeEntities = [];
+                    for (const post of data.posts) {
+                        const postHomeEntity = new PostHomeEntity(post);
+                        postHomeEntities.push(postHomeEntity);
+                    }
+
+                    return postHomeEntities;
                 }
             }
             return [];
@@ -65,7 +73,13 @@ export default class PostRepositoryImpl {
             if (response.status === 200) {
                 const data = await response.json();
                 if (data.status === 200) {
-                    console.log(data);
+                    const postHomeEntities = [];
+                    for (const post of data.recommendations) {
+                        const postHomeEntity = new PostHomeEntity(post);
+                        postHomeEntities.push(postHomeEntity);
+                    }
+
+                    return postHomeEntities;
                 }
             }
             return [];
@@ -164,6 +178,32 @@ export default class PostRepositoryImpl {
         }
     }
 
+    async addCommentToPost(postId, message) {
+        const formData = new FormData();
+        formData.append('token', localStorage.getItem('user_token'));
+        formData.append('post_id', postId);
+        formData.append('comment_description', message);
+
+        try {
+            const response = await fetch(`http://localhost:3000/add-comment`, {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.status === 200) {
+                const data = await response.json();
+                if (data.status === 200) {
+                    if (data.msg === 'Added the comment!') {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        } catch (error) {
+            return false;
+        }
+    }
+
     async deletePostById(postId) {
         const formData = new FormData();
         formData.append('token', localStorage.getItem('user_token'));
@@ -233,21 +273,26 @@ export default class PostRepositoryImpl {
     }
 
     async getAllPostFromBookmark() {
-        // try {
-        //     const response = await fetch(`http://localhost:3000/get-save-laters?token=${localStorage.getItem('user_token')}`, {
-        //         method: 'GET'
-        //     });
+        try {
+            const response = await fetch(`http://localhost:3000/get-save-laters?token=${localStorage.getItem('user_token')}`, {
+                method: 'GET'
+            });
 
-        //     if (response.status === 200) {
-        //         const data = await response.json();
-        //         if (data.status === 200) {
-        //             return new ListsBookmarkEntity(data.savelaters.length);
-        //         }
-        //     }
-        //     return 0;
-        // } catch (error) {
-        //     return 0;
-        // }
+            if (response.status === 200) {
+                const data = await response.json();
+                if (data.status === 200) {
+                    const listsBookmarkEntities = [];
+                    for (const bookmark of data.savelaters) {
+                        const listsBookmarkEntity = new ListBookmarkPostsEntity(bookmark);
+                        listsBookmarkEntities.push(listsBookmarkEntity);
+                    }
+                    return listsBookmarkEntities;
+                }
+            }
+            return 0;
+        } catch (error) {
+            return 0;
+        }
     }
 
     async addPostToDraft(postId) {

@@ -1,12 +1,22 @@
 import React, { useState } from "react";
 import { PrimaryButton } from "./atom/AppButton";
+import PostRepositoryImpl from "../../data/repositories/PostRepositoryImpl";
 
-const CommentsInput = ({ postId, commentId }) => {
+const CommentsInput = ({ postId, commentId, handleAddComment }) => {
     const [comment, setComment] = useState('');
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if (comment.trim() !== '') {
-            alert('Call API');
+            if (commentId === '-1') {
+                const postRepositoryImpl = new PostRepositoryImpl();
+                const success = await postRepositoryImpl.addCommentToPost(postId, comment);
+                if (success) {
+                    console.log('ssss');
+                    handleAddComment();
+                }
+            } else {
+                alert('Calling reply API');
+            }
         }
         setComment('');
     };
