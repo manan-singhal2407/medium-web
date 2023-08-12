@@ -27,41 +27,39 @@ const PostDetail = () => {
     const [commentId, setCommentId] = useState('');
 
     const fetchPostUsingId = async () => {
-        setTimeout(() => {
-            const postRepositoryImpl = new PostRepositoryImpl();
-            const data = postRepositoryImpl.getPostById(postId);
-            setPost(data[0]);
-            setUserPosts([...userPosts, ...data[1]]);
+        const postRepositoryImpl = new PostRepositoryImpl();
+        const data = await postRepositoryImpl.getPostById(postId);
+        setPost(data);
 
-            let viewList = localStorage.getItem('post');
-            if (viewList === undefined || viewList === null) {
-                viewList = 0;
-                localStorage.setItem('post', viewList);
-            }
-            let exist = false;
-            for (let i = 0; i < viewList.length; i++) {
-                console.log(viewList[i]);
-                if (viewList[i] === data[0].post_id) {
-                    exist = true;
-                }
-            }
-            if (!exist) {
-                let totalCount = localStorage.getItem('count');
-                if (totalCount === undefined || totalCount === null) {
-                    totalCount = 2;
-                    localStorage.setItem('count', totalCount);
-                }
-                if (totalCount > viewList) {
-                    viewList++;
-                    localStorage.setItem('post', viewList);
-                    setShowPayment(false);
-                } else {
-                    setShowPayment(true);
-                }
-            }
+        console.log(localStorage.getItem('user_id'));
+        console.log(data.user_id);
 
-            console.log(localStorage.getItem('post') + " - " + localStorage.getItem('count'));
-        }, Math.floor(Math.random() * 1500) + 500);
+        // let viewList = localStorage.getItem('post');
+        // if (viewList === undefined || viewList === null) {
+        //     viewList = 0;
+        //     localStorage.setItem('post', viewList);
+        // }
+        // let exist = false;
+        // for (let i = 0; i < viewList.length; i++) {
+        //     console.log(viewList[i]);
+        //     if (viewList[i] === data[0].post_id) {
+        //         exist = true;
+        //     }
+        // }
+        // if (!exist) {
+        //     let totalCount = localStorage.getItem('count');
+        //     if (totalCount === undefined || totalCount === null) {
+        //         totalCount = 2;
+        //         localStorage.setItem('count', totalCount);
+        //     }
+        //     if (totalCount > viewList) {
+        //         viewList++;
+        //         localStorage.setItem('post', viewList);
+        //         setShowPayment(false);
+        //     } else {
+        //         setShowPayment(true);
+        //     }
+        // }
     };
 
     useEffect(() => {
@@ -105,13 +103,13 @@ const PostDetail = () => {
                         </div>
                         <div className="ml-4">
                             <h2 className="font-bold cursor-pointer" onClick={handleUserClick}>{post.user_name}</h2>
-                            <p>{post.time_read} · {post.last_updated_at.substring(0, 10)}</p>
+                            <p>{post.time_read} · {post.last_updated_at.slice(0, 10)}</p>
                         </div>
                         <div className="ml-auto mr-2">
-                            {userId !== post.user_id && !post.is_user_following && (
+                            {localStorage.getItem('user_id') !== post.user_id.toString() && !post.is_user_following && (
                                 <PrimaryButton text='Follow' onClickHandle={handleFollowClick} />
                             )}
-                            {userId !== post.user_id && post.is_user_following && (
+                            {localStorage.getItem('user_id') !== post.user_id.toString() && post.is_user_following && (
                                 <SecondaryButton text='Following' onClickHandle={handleFollowClick} />
                             )}
                         </div>
@@ -132,7 +130,7 @@ const PostDetail = () => {
                         </div>
                         <div className="ml-auto flex items-center mr-6">
                             <img className='cursor-pointer' src={post.is_user_bookmark ? ic_bookmark_selected : ic_bookmark} alt='' onClick={handleBookmarkClick} />
-                            {post.user_id.toString() === userId && (
+                            {localStorage.getItem('user_id') === post.user_id.toString() && (
                                 <img className='mx-2 cursor-pointer' onClick={handleEditClick} src={ic_edit} alt='' />
                             )}
                             {post.user_id.toString() === userId && (

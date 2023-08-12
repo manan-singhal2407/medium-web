@@ -46,7 +46,7 @@ const PostViewComponent = ({ post }) => {
     const handleBookmarkClick = async () => {
         const postRepositoryImpl = new PostRepositoryImpl();
         if (isUserBookmark) {
-            
+            alert('No such API');
         } else {
             const success = await postRepositoryImpl.addPostToBoookmarkById(post.post_id);
             if (success) {

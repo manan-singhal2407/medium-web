@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ic_view from '../../assets/images/ic_view.svg';
 import ic_like from '../../assets/images/ic_like.svg';
@@ -6,9 +6,13 @@ import ic_liked from '../../assets/images/ic_liked.svg';
 import ic_comment from '../../assets/images/ic_comment.svg';
 import ic_bookmark from '../../assets/images/ic_bookmark.svg';
 import ic_bookmark_selected from '../../assets/images/ic_bookmark_selected.svg';
+import PostRepositoryImpl from '../../data/repositories/PostRepositoryImpl';
 
 const TopicsPostViewComponent = ({ post }) => {
     const navigate = useNavigate();
+    const [isUserLiked, setIsUserLiked] = useState(post.is_user_liked);
+    const [likesCount, setLikesCount] = useState(post.likes_count);
+    const [isUserBookmark, setIsUserBookmark] = useState(post.is_user_bookmark);
 
     const handleUserClick = () => {
         navigate(`/profile/${post.user_id}`);
@@ -18,12 +22,33 @@ const TopicsPostViewComponent = ({ post }) => {
         navigate(`/post/${post.post_id}`);
     }
 
-    const handleLikeClick = () => {
-        alert('Call API');
+    const handleLikeClick = async () => {
+        const postRepositoryImpl = new PostRepositoryImpl();
+        if (isUserLiked) {
+            const success = await postRepositoryImpl.dislikePostById(post.post_id);
+            if (success) {
+                setIsUserLiked(false);
+                setLikesCount(likesCount-1);
+            }
+        } else {
+            const success = await postRepositoryImpl.likePostById(post.post_id);
+            if (success) {
+                setIsUserLiked(true);
+                setLikesCount(likesCount+1);
+            }
+        }
     };
 
-    const handleBookmarkClick = () => {
-        alert('Call API');
+    const handleBookmarkClick = async () => {
+        const postRepositoryImpl = new PostRepositoryImpl();
+        if (isUserBookmark) {
+            alert('No such API');
+        } else {
+            const success = await postRepositoryImpl.addPostToBoookmarkById(post.post_id);
+            if (success) {
+                setIsUserBookmark(true);
+            }
+        }
     };
 
     return (
@@ -46,15 +71,15 @@ const TopicsPostViewComponent = ({ post }) => {
                     {post.views_count}
                 </div>
                 <div className="flex items-center mr-6 curson-pointer">
-                    <img className='cursor-pointer' src={post.is_user_liked ? ic_liked : ic_like} alt='' onClick={handleLikeClick} />
-                    {post.likes_count}
+                    <img className='cursor-pointer' src={isUserLiked ? ic_liked : ic_like} alt='' onClick={handleLikeClick} />
+                    {likesCount}
                 </div>
                 <div className="flex items-center mr-6 text-black">
                     <img className='mr-0.5' src={ic_comment} alt='' />
                     {post.comments_count}
                 </div>
                 <div className="ml-auto flex items-center mr-6">
-                    <img className='cursor-pointer' src={post.is_user_bookmark ? ic_bookmark_selected : ic_bookmark} alt='' onClick={handleBookmarkClick} />
+                    <img className='cursor-pointer' src={isUserBookmark ? ic_bookmark_selected : ic_bookmark} alt='' onClick={handleBookmarkClick} />
                 </div>
             </div>
         </div>

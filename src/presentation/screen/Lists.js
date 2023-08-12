@@ -16,6 +16,13 @@ const Lists = () => {
         if (loading) return;
 
         setLoading(true);
+        if (listId === '-1') {
+            const postRepositoryImpl = new PostRepositoryImpl();
+            const data = await postRepositoryImpl.getAllPostFromBookmark();
+        } else {
+            console.log(listId);
+        }
+        setLoading(false);
         setTimeout(() => {
             const postRepositoryImpl = new PostRepositoryImpl();
             const data = postRepositoryImpl.getAllPosts();

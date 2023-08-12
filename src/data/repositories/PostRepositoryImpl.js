@@ -2,6 +2,7 @@ import { dummyPost, returnRandomPosts } from "../dummy/DummyData";
 import DraftEntity from "../model/DraftEntity";
 import ListsBookmarkEntity from "../model/ListsBookmarkEntity";
 import ListsEntity from "../model/ListsEntity";
+import PostByIdEntity from "../model/PostByIdEntity";
 import PostEntity from "../model/PostEntity";
 
 export default class PostRepositoryImpl {
@@ -88,6 +89,23 @@ export default class PostRepositoryImpl {
                     }
 
                     return postEntities;
+                }
+            }
+            return [];
+        } catch (error) {
+            return [];
+        }
+    }
+
+    async getPostById(postId) {
+        try {
+            const response = await fetch(`http://127.0.0.1:3000/get-post?token=${localStorage.getItem('user_token')}&post_id=${postId}`, {
+                method: 'GET'
+            });
+            if (response.status === 200) {
+                const data = await response.json();
+                if (data.status === 200) {
+                    return new PostByIdEntity(data.post);
                 }
             }
             return [];
@@ -208,13 +226,13 @@ export default class PostRepositoryImpl {
                     return new ListsBookmarkEntity(data.savelaters.length);
                 }
             }
-            return [false, null];
+            return null;
         } catch (error) {
-            return [false, null];
+            return null;
         }
     }
 
-    async getAllPostFromBoookmark() {
+    async getAllPostFromBookmark() {
         // try {
         //     const response = await fetch(`http://localhost:3000/get-save-laters?token=${localStorage.getItem('user_token')}`, {
         //         method: 'GET'
@@ -223,9 +241,7 @@ export default class PostRepositoryImpl {
         //     if (response.status === 200) {
         //         const data = await response.json();
         //         if (data.status === 200) {
-        //             if (data.msg === 'Saved your post') {
-        //                 return true;
-        //             }
+        //             return new ListsBookmarkEntity(data.savelaters.length);
         //         }
         //     }
         //     return 0;
@@ -354,22 +370,5 @@ export default class PostRepositoryImpl {
         const postList = returnRandomPosts(6);
         const posts = postList.map(data => new PostEntity(data));
         return posts;
-    }
-
-    getPostById(postId) {
-        const posts = dummyPost.map(data => new PostEntity(data));
-        let post = null;
-        let userPosts = [];
-        for (let i = 0; i < posts.length; i++) {
-            if (postId === posts[i].post_id.toString()) {
-                post = posts[i];
-            }
-        }
-        for (let i = 0; i < posts.length; i++) {
-            if (post.user_id === posts[i].user_id && post.post_id !== posts[i].post_id) {
-                userPosts.push(posts[i]);
-            }
-        }
-        return [post, userPosts];
     }
 }
