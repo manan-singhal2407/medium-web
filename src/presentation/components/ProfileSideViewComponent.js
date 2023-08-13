@@ -5,10 +5,10 @@ import ProfileRepositoryImpl from '../../data/repositories/ProfileRepositoryImpl
 
 const ProfileSideViewComponent = ({ profile, handleDataChange }) => {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-    const [file, setFile] = useState('');
+    const [file, setFile] = useState(profile.user_image);
     const [name, setName] = useState(profile.user_name);
     const [bio, setBio] = useState(profile.bio);
-    const [selectedImage, setSelectedImage] = useState(null);
+    const [selectedImage, setSelectedImage] = useState(profile.user_image);
     const [isUserFollowing, setIsUserFollowing] = useState(profile.is_user_following);
 
     const handleImageSelect = (event) => {

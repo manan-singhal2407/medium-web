@@ -2,24 +2,23 @@ import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import React, { useState, useEffect } from 'react';
 import TopNavBarEditor from '../components/TopAppBarEditor';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import PostRepositoryImpl from '../../data/repositories/PostRepositoryImpl';
-import Toast from '../components/atom/Toast';
 
 const NewStory = () => {
+    const navigate = useNavigate();
     const params = useParams();
-    let postId = params.id;
-    let isEditingPost = postId !== undefined;
+    const [postId, setPostId] = useState(params.id);
+    const [isEditingPost, setIsEditingPost] = useState(params.id !== undefined);
 
-    const [toast, setToast] = useState('');
+    const [published, setPublished] = useState(false);
     const [title, setTitle] = useState('');
+    const [file, setFile] = useState('');
     const [selectedImage, setSelectedImage] = useState('');
     const [topic, setTopic] = useState('');
     const [data, setData] = useState('');
     const [lastEdited, setLastEdited] = useState(null);
     const [textShowingSavingHistory, setTextShowingSavingHistory] = useState('');
-
-    console.log(localStorage.getItem('user_token'));
 
     const handleEditorChange = (e, editor) => {
         setData(editor.getData());
@@ -28,54 +27,75 @@ const NewStory = () => {
 
     const handleImageSelect = (event) => {
         const file = event.target.files[0];
+        setFile(file);
         if (file) {
             const reader = new FileReader();
             reader.onloadend = () => {
                 setSelectedImage(reader.result);
+                setLastEdited(new Date());
             };
             reader.readAsDataURL(file);
         }
     };
 
-    const sendDataToDatabase = () => {
-        // alert('call API');
-        // todo on success
-        // if (!isEditingPost) {
-        //     postId = 100;
-        //     isEditingPost = true;
-        // }
-        // if (isEditingPost) {
-        //     window.history.replaceState({}, '', `/p/${postId}`);
-        //     setTextShowingSavingHistory('Saved');
-        // }
+    const sendDataToDatabase = async () => {
+        setTextShowingSavingHistory('Saving...');
+        const postRepositoryImpl = new PostRepositoryImpl();
+        if (isEditingPost) {
+            const post = await postRepositoryImpl.updateUserPostWithId(postId, title, topic, file, data, published);
+            if (post !== null) {
+                setTextShowingSavingHistory('Saved');
+            } else {
+                setTextShowingSavingHistory('Failed');
+            }
+        } else {
+            const post = await postRepositoryImpl.createNewPostForUser(title, topic, file, data, published);
+            if (post !== null) {
+                setPostId(post.post_id);
+                setIsEditingPost(true);
+                window.history.replaceState({}, '', `/p/${post.post_id}`);
+                setTextShowingSavingHistory('Saved');
+            } else {
+                setTextShowingSavingHistory('Failed');
+            }
+        }
     };
 
     const handleOnPublish = async () => {
+        setPublished(true);
         setTextShowingSavingHistory('Publishing...');
         const postRepositoryImpl = new PostRepositoryImpl();
-        const post_id = await postRepositoryImpl.publishPostToDatabase(title, topic, selectedImage, data);
-        if (post_id !== -1) {
-            postId = post_id;
-            isEditingPost = true;
-            window.history.replaceState({}, '', `/p/${postId}`);
-            setTextShowingSavingHistory('Published');
-            setToast("Post published");
+        if (isEditingPost) {
+            const post = await postRepositoryImpl.updateUserPostWithId(postId, title, topic, file, data, published);
+            if (post !== null) {
+                setTextShowingSavingHistory('Published');
+                navigate(`/post/${post.post_id}`);
+            } else {
+                setTextShowingSavingHistory('Failed');
+            }
         } else {
-            setTextShowingSavingHistory('Failed');
-            setToast("Something went wrong");
+            const post = await postRepositoryImpl.createNewPostForUser(title, topic, file, data, published);
+            if (post !== null) {
+                setTextShowingSavingHistory('Published');
+                navigate(`/post/${post.post_id}`);
+            } else {
+                setTextShowingSavingHistory('Failed');
+            }
         }
-        setTimeout(() => {
-            setToast('');
-        }, 4000);
+    };
+
+    const getDataFromPostId = async () => {
+        const postRepositoryImpl = new PostRepositoryImpl();
+        const data = await postRepositoryImpl.getPostById(postId);
+        setTitle(data.title);
+        setTopic(data.topics);
+        setData(data.text);
+        // todo set published, image and file
     };
 
     useEffect(() => {
         if (isEditingPost) {
-            const postRepositoryImpl = new PostRepositoryImpl();
-            const data = postRepositoryImpl.getPostById(postId);
-            setTitle(data[0].title);
-            setTopic(data[0].topics);
-            setData(data[0].text);
+            getDataFromPostId();
         }
     }, []);
 
@@ -93,9 +113,6 @@ const NewStory = () => {
 
     return (
         <div className="flex flex-col h-screen w-screen">
-            {toast !== '' && (
-                <Toast message="Something went wrong" />
-            )}
             <TopNavBarEditor textShowingSavingHistory={textShowingSavingHistory} showRevisionHistoryIcon={isEditingPost} onClickPublishButton={handleOnPublish} />
             <div style={{ width: '800px', height: '100%' }} className='mx-auto mt-4 pb-16'>
                 <input

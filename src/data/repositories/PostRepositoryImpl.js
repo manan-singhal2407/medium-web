@@ -1,14 +1,14 @@
-import { dummyPost, returnRandomPosts } from "../dummy/DummyData";
+import { returnRandomPosts } from "../dummy/DummyData";
+import CreatePostEntity from "../model/CreatePostEntity";
 import DraftEntity from "../model/DraftEntity";
 import ListBookmarkPostsEntity from "../model/ListBookmarkPostsEntity";
 import ListsBookmarkEntity from "../model/ListsBookmarkEntity";
-import ListsEntity from "../model/ListsEntity";
 import PostByIdEntity from "../model/PostByIdEntity";
 import PostEntity from "../model/PostEntity";
 import PostHomeEntity from "../model/PostHomeEntity";
 
 export default class PostRepositoryImpl {
-    async createNewPostToUser(title, topic, image, text) {
+    async createNewPostForUser(title, topic, image, text, publish) {
         var topicsArray = topic.split(',');
         var trimmedArray = topicsArray.map(function(item) {
             return item.trim();
@@ -18,7 +18,8 @@ export default class PostRepositoryImpl {
             "title": title,
             "topics": trimmedArray,
             "featured_image": image,
-            "content": text
+            "content": text,
+            "publish_status": publish,
         };
 
         try {
@@ -32,13 +33,47 @@ export default class PostRepositoryImpl {
             if (response.status === 200) {
                 const data = await response.json();
                 if (data.status === 200) {
-
-                    console.log(data.post);
+                    return new CreatePostEntity(data.post);
                 }
             }
-            return false;
+            return null;
         } catch (error) {
-            return false;
+            return null;
+        }
+    }
+
+    async updateUserPostWithId(postId, title, topic, image, text, publish) {
+        var topicsArray = topic.split(',');
+        var trimmedArray = topicsArray.map(function(item) {
+            return item.trim();
+        });
+        const postData = {
+            "token": localStorage.getItem('user_token'),
+            "title": title,
+            "post_id": postId,
+            "topics": trimmedArray,
+            "featured_image": image,
+            "content": text,
+            "publish_status": publish,
+        };
+
+        try {
+            const response = await fetch(`http://127.0.0.1:3000/update-post`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(postData)
+            });
+            if (response.status === 200) {
+                const data = await response.json();
+                if (data.status === 200) {
+                    return new CreatePostEntity(data.post);
+                }
+            }
+            return null;
+        } catch (error) {
+            return null;
         }
     }
 
@@ -80,6 +115,29 @@ export default class PostRepositoryImpl {
                     }
 
                     return postHomeEntities;
+                }
+            }
+            return [];
+        } catch (error) {
+            return [];
+        }
+    }
+
+    async getAllPosts() {
+        try {
+            const response = await fetch(`http://127.0.0.1:3000/view-posts?token=${localStorage.getItem('user_token')}`, {
+                method: 'GET'
+            });
+            if (response.status === 200) {
+                const data = await response.json();
+                if (data.status === 200) {
+                    const postEntities = [];
+                    for (const post of data.posts) {
+                        const postEntity = new PostEntity(post);
+                        postEntities.push(postEntity);
+                    }
+
+                    return postEntities;
                 }
             }
             return [];
@@ -403,12 +461,6 @@ export default class PostRepositoryImpl {
             console.log(error);
             return -1;
         }
-    }
-
-    getAllPosts() {
-        const postList = returnRandomPosts(6);
-        const posts = postList.map(data => new PostEntity(data));
-        return posts;
     }
 
     getPostsForTopic(topicName) {

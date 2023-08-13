@@ -25,20 +25,20 @@ const Search = () => {
         setLoading(true);
         const searchRepositoryImpl = new SearchRepositoryImpl();
         const postList = await searchRepositoryImpl.searchPostUsingKeyword(searchText);
-        setPosts([...posts, ...postList]);
+        setPosts(postList);
 
         const profileList = await searchRepositoryImpl.searchAuthorUsingKeyword(searchText);
-        setProfiles([...profiles, ...profileList]);
+        setProfiles(profileList);
 
         const topicsList = await searchRepositoryImpl.searchTopicsUsingKeyword(searchText);
-        setTopics([...topics, ...topicsList]);
+        setTopics(topicsList);
 
         setLoading(false);
     };
 
     useEffect(() => {
         fetchPostData();
-    }, []);
+    }, [searchText]);
 
     // useEffect(() => {
     //     const handleScroll = () => {

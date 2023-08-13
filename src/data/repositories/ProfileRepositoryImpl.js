@@ -25,6 +25,8 @@ export default class ProfileRepositoryImpl {
         formData.append('username', name);
         formData.append('about', bio);
         formData.append('profile_pic', file);
+
+        localStorage.setItem('user_name', name);
         try {
             const response = await fetch(`http://127.0.0.1:3000/edit-user-details`, {
                 method: 'POST',

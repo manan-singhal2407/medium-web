@@ -12,7 +12,7 @@ const AllPosts = () => {
 
         setLoading(true);
         const postRepositoryImpl = new PostRepositoryImpl();
-        const data = postRepositoryImpl.getAllPosts();
+        const data = await postRepositoryImpl.getAllPosts();
         setPosts([...posts, ...data]);
         setLoading(false);
     };

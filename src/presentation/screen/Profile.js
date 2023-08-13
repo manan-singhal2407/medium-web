@@ -57,6 +57,8 @@ const Profile = () => {
             fetchUserPosts();
             fetchUserLists();
             fetchUserDrafts();
+        } else {
+            
         }
     }, []);
 

@@ -64,7 +64,7 @@ const TopicsPostViewComponent = ({ post }) => {
             </div>
             <h2 className="text-xl font-bold line-clamp-1 mt-2 cursor-pointer" onClick={handlePostClick}>{post.title}</h2>
             <p className="mt-2 line-clamp-3 cursor-pointer" onClick={handlePostClick}>{post.text}</p>
-            <p className="mt-4 text-md text-green-500">{post.time_read} · {post.last_updated_at.substring(0, 10)}</p>
+            <p className="mt-4 text-md text-green-500">{post.time_read} · {post.created_at.substring(0, 10)}</p>
             <div className="flex items-center text-sm text-gray-500 mt-4">
                 <div className="flex items-center mr-4">
                     <img className='mr-0.5' src={ic_view} alt='' />
