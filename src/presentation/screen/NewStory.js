@@ -66,7 +66,7 @@ const NewStory = () => {
         setTextShowingSavingHistory('Publishing...');
         const postRepositoryImpl = new PostRepositoryImpl();
         if (isEditingPost) {
-            const post = await postRepositoryImpl.updateUserPostWithId(postId, title, topic, file, data, published);
+            const post = await postRepositoryImpl.updateUserPostWithId(postId, title, topic, file, data, true);
             if (post !== null) {
                 setTextShowingSavingHistory('Published');
                 navigate(`/post/${post.post_id}`);
@@ -74,7 +74,7 @@ const NewStory = () => {
                 setTextShowingSavingHistory('Failed');
             }
         } else {
-            const post = await postRepositoryImpl.createNewPostForUser(title, topic, file, data, published);
+            const post = await postRepositoryImpl.createNewPostForUser(title, topic, file, data, true);
             if (post !== null) {
                 setTextShowingSavingHistory('Published');
                 navigate(`/post/${post.post_id}`);
@@ -113,7 +113,7 @@ const NewStory = () => {
 
     return (
         <div className="flex flex-col h-screen w-screen">
-            <TopNavBarEditor textShowingSavingHistory={textShowingSavingHistory} showRevisionHistoryIcon={isEditingPost} onClickPublishButton={handleOnPublish} />
+            <TopNavBarEditor textShowingSavingHistory={textShowingSavingHistory} showRevisionHistoryIcon={isEditingPost} postId={postId} onClickPublishButton={handleOnPublish} />
             <div style={{ width: '800px', height: '100%' }} className='mx-auto mt-4 pb-16'>
                 <input
                     type="text"

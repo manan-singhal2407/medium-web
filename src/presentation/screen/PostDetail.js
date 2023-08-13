@@ -18,12 +18,12 @@ import StripePayment from '../components/StripePayment';
 import { returnRandomPosts } from '../../data/dummy/DummyData';
 import ic_close from '../../assets/images/ic_close.svg';
 import ListRepositoryImpl from '../../data/repositories/ListRepositoryImpl';
+import ProfileRepositoryImpl from '../../data/repositories/ProfileRepositoryImpl';
 
 const PostDetail = () => {
     const navigate = useNavigate();
     const params = useParams();
     const postId = params.id;
-    const [userId, setUserId] = useState('');
     const [post, setPost] = useState(null);
     const [showPayment, setShowPayment] = useState(false);
     const [userPosts, setUserPosts] = useState([]);
@@ -32,6 +32,7 @@ const PostDetail = () => {
     const [isUserLiked, setIsUserLiked] = useState(null);
     const [likesCount, setLikesCount] = useState(null);
     const [isUserBookmark, setIsUserBookmark] = useState(null);
+    const [isUserFollowing, setIsUserFollowing] = useState(false);
 
     const [isBookmarkModalOpen, setIsBookmarkModalOpen] = useState(false);
     const [userLists, setUserLists] = useState([]);
@@ -45,46 +46,62 @@ const PostDetail = () => {
         setLikesCount(data.likes_count);
         setIsUserBookmark(data.is_user_bookmark);
 
-
-        let viewList = localStorage.getItem('post');
-        if (viewList === undefined || viewList === null) {
-            viewList = 0;
-            localStorage.setItem('post', viewList);
-        }
-        let exist = false;
-        for (let i = 0; i < viewList.length; i++) {
-            console.log(viewList[i]);
-            if (viewList[i] === data.post_id) {
-                exist = true;
-            }
-        }
-        if (!exist) {
-            let totalCount = localStorage.getItem('count');
-            if (totalCount === undefined || totalCount === null) {
-                totalCount = 2;
-                localStorage.setItem('count', totalCount);
-            }
-            if (totalCount > viewList) {
-                viewList++;
+        if (localStorage.getItem('user_token') === null || localStorage.getItem('user_token') === undefined || localStorage.getItem('user_token') === '') {
+            let viewList = localStorage.getItem('post');
+            if (viewList === undefined || viewList === null) {
+                viewList = 0;
                 localStorage.setItem('post', viewList);
-                setShowPayment(false);
-            } else {
+            }
+            let exist = false;
+            for (let i = 0; i < viewList.length; i++) {
+                if (viewList[i] === data.post_id) {
+                    exist = true;
+                }
+            }
+            if (!exist) {
+                let totalCount = localStorage.getItem('count');
+                if (totalCount === undefined || totalCount === null) {
+                    totalCount = 2;
+                    localStorage.setItem('count', totalCount);
+                }
+                if (totalCount > viewList) {
+                    viewList++;
+                    localStorage.setItem('post', viewList);
+                    setShowPayment(false);
+                } else {
+                    setShowPayment(true);
+                }
+            }
+        } else {
+            if (data.text === null || data.text === undefined) {
                 setShowPayment(true);
             }
         }
     };
 
     useEffect(() => {
-        setUserId(localStorage.getItem('user_id') === null || localStorage.getItem('user_id') === '' ? '' : localStorage.getItem('user_id'));
         fetchPostUsingId();
+        fetchUserLists();
     }, []);
 
     const handleUserClick = () => {
         navigate(`/profile/${post.user_id}`);
     }
 
-    const handleFollowClick = () => {
-        alert('Call API');
+    const handleFollowClick = async () => {
+        const profileRepositoryImpl = new ProfileRepositoryImpl();
+        const success = await profileRepositoryImpl.followUser(post.user_id);
+        if (success) {
+            setIsUserFollowing(true);
+        }
+    };
+
+    const handleUnfollowClick = async () => {
+        const profileRepositoryImpl = new ProfileRepositoryImpl();
+        const success = await profileRepositoryImpl.unfollowUser(post.user_id);
+        if (success) {
+            setIsUserFollowing(false);
+        }
     };
 
     const handleLikeClick = async () => {
@@ -148,10 +165,6 @@ const PostDetail = () => {
         }
     };
 
-    useEffect(() => {
-        fetchUserLists();
-    }, []);
-
     const handleEditClick = () => {
         navigate(`/p/${post.post_id}`);
     };
@@ -176,14 +189,14 @@ const PostDetail = () => {
                         </div>
                         <div className="ml-4">
                             <h2 className="font-bold cursor-pointer" onClick={handleUserClick}>{post.user_name}</h2>
-                            <p>{post.time_read} · {post.last_updated_at.slice(0, 10)}</p>
+                            <p>{post.time_read} · {post.created_at.slice(0, 10)}</p>
                         </div>
                         <div className="ml-auto mr-2">
-                            {localStorage.getItem('user_id') !== post.user_id.toString() && !post.is_user_following && (
+                            {localStorage.getItem('user_id') !== post.user_id.toString() && !isUserFollowing && (
                                 <PrimaryButton text='Follow' onClickHandle={handleFollowClick} />
                             )}
-                            {localStorage.getItem('user_id') !== post.user_id.toString() && post.is_user_following && (
-                                <SecondaryButton text='Following' onClickHandle={handleFollowClick} />
+                            {localStorage.getItem('user_id') !== post.user_id.toString() && isUserFollowing && (
+                                <SecondaryButton text='Following' onClickHandle={handleUnfollowClick} />
                             )}
                         </div>
                     </div>
@@ -206,7 +219,7 @@ const PostDetail = () => {
                             {localStorage.getItem('user_id') === post.user_id.toString() && (
                                 <img className='mx-2 cursor-pointer' onClick={handleEditClick} src={ic_edit} alt='' />
                             )}
-                            {post.user_id.toString() === userId && (
+                            {post.user_id.toString() === localStorage.getItem('user_id') && (
                                 <img className='cursor-pointer' onClick={handleDeleteClick} src={ic_delete} alt='' />
                             )}
                         </div>
@@ -260,7 +273,7 @@ const PostDetail = () => {
                             </div>
                         </div>
                     )}
-                    {showPayment === true ? userId !== '' ? <div className="flex justify-center items-center bg-gray-150">
+                    {showPayment === true ? localStorage.getItem('user_token') !== null && localStorage.getItem('user_token') !== undefined ? <div className="flex justify-center items-center bg-gray-150">
                         <div className="w-full h-80 px-32 bg-gray-150 flex items-center">
                             <p className="text-lg">You need to pay to view more posts</p>
                             <StripePayment

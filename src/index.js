@@ -13,6 +13,7 @@ import Profile from "./presentation/screen/Profile";
 import Topics from "./presentation/screen/Topics";
 import Lists from "./presentation/screen/Lists";
 import AllPosts from "./presentation/screen/AllPosts";
+import VersionHistory from "./presentation/screen/VersionHistory";
 
 // todo revision history
 
@@ -32,6 +33,7 @@ const router = createBrowserRouter([
 		children: [
 			{ path: "/new-story", element: <NewStory /> },
 			{ path: "/p/:id", element: <NewStory /> },
+			{ path: "/version/:id", element: <VersionHistory /> },
 		],
 	},
 ]);

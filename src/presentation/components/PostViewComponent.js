@@ -47,7 +47,7 @@ const PostViewComponent = ({ post }) => {
         }
     };
 
-    const handleBookmarkIconClick = async () => {
+    const handleBookmarkIconClick = () => {
         setIsBookmarkModalOpen(true);
     };
 
@@ -136,7 +136,7 @@ const PostViewComponent = ({ post }) => {
                         {post.comments_count}
                     </div>
                     <div className="ml-auto flex items-center mr-6">
-                        <img className='cursor-pointer' src={isUserBookmark ? ic_bookmark_selected : ic_bookmark} alt='' onClick={handleBookmarkIconClick} />
+                        {/* <img className='cursor-pointer' src={isUserBookmark ? ic_bookmark_selected : ic_bookmark} alt='' onClick={handleBookmarkIconClick} /> */}
                         {post.user_id.toString() === localStorage.getItem('user_id') && (
                             <img className='mx-2 cursor-pointer' onClick={handleEditClick} src={ic_edit} alt='' />
                         )}

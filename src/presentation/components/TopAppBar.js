@@ -57,7 +57,7 @@ const TopNavBar = ({ searchTextParam, fromDateParam, toDateParam, likesParam, co
                         if (e.key === 'Enter' && searchText !== '') {
                             navigate({
                                 pathname: '/search',
-                                search: `?q=${searchText}&fromDate=${fromDate}&toDate=${toDate}&likes=${likesRange}&comments=${commentsRange}`,
+                                search: `?q=${searchText}`,
                             });
                         }
                     }}

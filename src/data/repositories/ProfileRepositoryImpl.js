@@ -40,11 +40,9 @@ export default class ProfileRepositoryImpl {
                         return true;
                     }
                 }
-                console.log(data.msg);
             }
             return false;
         } catch (error) {
-            console.log(error);
             return false;
         }
     }

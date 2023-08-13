@@ -11,7 +11,6 @@ const CommentsInput = ({ postId, commentId, handleAddComment }) => {
                 const postRepositoryImpl = new PostRepositoryImpl();
                 const success = await postRepositoryImpl.addCommentToPost(postId, comment);
                 if (success) {
-                    console.log('ssss');
                     handleAddComment();
                 }
             } else {

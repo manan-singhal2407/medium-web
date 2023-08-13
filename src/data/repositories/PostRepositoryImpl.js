@@ -6,6 +6,7 @@ import ListsBookmarkEntity from "../model/ListsBookmarkEntity";
 import PostByIdEntity from "../model/PostByIdEntity";
 import PostEntity from "../model/PostEntity";
 import PostHomeEntity from "../model/PostHomeEntity";
+import PostSearchEntity from "../model/PostSearchEntity";
 
 export default class PostRepositoryImpl {
     async createNewPostForUser(title, topic, image, text, publish) {
@@ -33,6 +34,11 @@ export default class PostRepositoryImpl {
             if (response.status === 200) {
                 const data = await response.json();
                 if (data.status === 200) {
+                    if (publish) {
+                        alert('Call API to delete draft with post id');
+                    } else {
+                        await this.addPostToDraft(data.post.id);
+                    }
                     return new CreatePostEntity(data.post);
                 }
             }
@@ -68,6 +74,11 @@ export default class PostRepositoryImpl {
             if (response.status === 200) {
                 const data = await response.json();
                 if (data.status === 200) {
+                    if (publish) {
+                        alert('Call API to delete draft with post id');
+                    } else {
+                        await this.addPostToDraft(data.post.id);
+                    }
                     return new CreatePostEntity(data.post);
                 }
             }
@@ -146,6 +157,28 @@ export default class PostRepositoryImpl {
         }
     }
 
+    async userPayedAmount(count) {
+        const formData = new FormData();
+        formData.append('token', localStorage.getItem('user_token'));
+        formData.append('count', count);
+
+        try {
+            const response = await fetch(`http://127.0.0.1:3000/add-count`, {
+                method: 'POST',
+                body: formData
+            });
+            if (response.status === 200) {
+                const data = await response.json();
+                if (data.status === 200) {
+                    return true;
+                }
+            }
+            return false;
+        } catch (error) {
+            return false;
+        }
+    }
+
     async getCurrentUserPosts() {
         try {
             const response = await fetch(`http://127.0.0.1:3000/view-my-posts?token=${localStorage.getItem('user_token')}`, {
@@ -156,6 +189,30 @@ export default class PostRepositoryImpl {
                 if (data.status === 200) {
                     const postEntities = [];
                     for (const post of data.posts) {
+                        const postEntity = new PostEntity(post);
+                        postEntities.push(postEntity);
+                    }
+
+                    return postEntities;
+                }
+            }
+            return [];
+        } catch (error) {
+            return [];
+        }
+    }
+
+    async getOtherUserPosts(userId) {
+        try {
+            const response = await fetch(`http://127.0.0.1:3000/search-posts?token=${localStorage.getItem('user_token')}&author_id=${userId}`, {
+                method: 'GET'
+            });
+
+            if (response.status === 200) {
+                const data = await response.json();
+                if (data.status === 200) {
+                    const postEntities = [];
+                    for (const post of data.postsList) {
                         const postEntity = new PostEntity(post);
                         postEntities.push(postEntity);
                     }
@@ -391,7 +448,7 @@ export default class PostRepositoryImpl {
 
             if (response.status === 200) {
                 const data = await response.json();
-                if (data.status === 200) {
+                if (data.staus === 200) {
                     if (data.msg === 'Removed from Drafts') {
                         return true;
                     }
@@ -423,43 +480,6 @@ export default class PostRepositoryImpl {
             return [];
         } catch (error) {
             return [];
-        }
-    }
-
-
-
-
-
-    async publishPostToDatabase(title, topic, image, text) {
-        const postData = {
-            "post": {
-                "title": "Post Title",
-                "topic": "Post Topic",
-                "featured_image": "URL of the featured image",
-                "text": "aa",
-                "user_id": 12,
-                "published_at": "2023-08-05T06:35:15.717Z",
-                "theme_name": "test"
-            }
-        };
-        try {
-            const response = await fetch('http://127.0.0.1:3000/posts', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                credentials: 'include',
-                body: JSON.stringify(postData)
-            });
-            if (response.status === 201) {
-                const data = await response.json();
-                return data.id;
-            } else {
-                return -1;
-            }
-        } catch (error) {
-            console.log(error);
-            return -1;
         }
     }
 

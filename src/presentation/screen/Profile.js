@@ -38,6 +38,12 @@ const Profile = () => {
         setUserPosts([...userPosts, ...data]);
     };
 
+    const fetchOtherUserPosts = async () => {
+        const postRepositoryImpl = new PostRepositoryImpl();
+        const data = await postRepositoryImpl.getOtherUserPosts(profileId);
+        setUserPosts([...userPosts, ...data]);
+    };
+
     const fetchUserLists = async () => {
         const listRepositoryImpl = new ListRepositoryImpl();
         const data = await listRepositoryImpl.getAllLists();
@@ -52,13 +58,12 @@ const Profile = () => {
 
     useEffect(() => {
         fetchProfileInfo();
-        // todo remove this if condition
         if (localStorage.getItem('user_id') === profileId) {
             fetchUserPosts();
             fetchUserLists();
             fetchUserDrafts();
         } else {
-            
+            fetchOtherUserPosts();
         }
     }, []);
 

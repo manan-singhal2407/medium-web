@@ -1,5 +1,4 @@
-import ListsBookmarkEntity from "../model/ListsBookmarkEntity";
-import PostSearchEntity from "../model/PostSearchEntity";
+import PostEntity from "../model/PostEntity";
 import ProfileSearchEntity from "../model/ProfileSearchEntity";
 import TopicsEntity from "../model/TopicsEntity";
 
@@ -15,7 +14,7 @@ export default class SearchRepositoryImpl {
                 if (data.status === 200) {
                     const postSearchEntities = [];
                     for (const post of data.postsList) {
-                        const postSearchEntity = new PostSearchEntity(post);
+                        const postSearchEntity = new PostEntity(post);
                         postSearchEntities.push(postSearchEntity);
                     }
 

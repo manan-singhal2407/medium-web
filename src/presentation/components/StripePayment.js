@@ -1,15 +1,19 @@
 import React from 'react'
 import axios from 'axios';
 import StripeCheckout from 'react-stripe-checkout';
+import PostRepositoryImpl from '../../data/repositories/PostRepositoryImpl';
 
 const CURRENCY = 'USD';
 
 const fromDollarToCent = amount => parseInt(amount * 100);
 
+const sendUpdateToServer = async () => {
+    const postRepositoryImpl = new PostRepositoryImpl();
+    await postRepositoryImpl.userPayedAmount(5);
+}
+
 const successPayment = data => {
-    let totalCount = localStorage.getItem('count');
-    localStorage.setItem('count', totalCount+10);
-    alert('Call API to say that user can now see 5 more posts');
+    sendUpdateToServer();
 };
 
 const onToken = (amount, description) => token =>
