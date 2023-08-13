@@ -16,6 +16,8 @@ import CommentsInput from '../components/CommentInput';
 import PostRepositoryImpl from '../../data/repositories/PostRepositoryImpl';
 import StripePayment from '../components/StripePayment';
 import { returnRandomPosts } from '../../data/dummy/DummyData';
+import ic_close from '../../assets/images/ic_close.svg';
+import ListRepositoryImpl from '../../data/repositories/ListRepositoryImpl';
 
 const PostDetail = () => {
     const navigate = useNavigate();
@@ -30,6 +32,10 @@ const PostDetail = () => {
     const [isUserLiked, setIsUserLiked] = useState(null);
     const [likesCount, setLikesCount] = useState(null);
     const [isUserBookmark, setIsUserBookmark] = useState(null);
+
+    const [isBookmarkModalOpen, setIsBookmarkModalOpen] = useState(false);
+    const [userLists, setUserLists] = useState([]);
+    const [newListName, setNewListName] = useState('');
 
     const fetchPostUsingId = async () => {
         const postRepositoryImpl = new PostRepositoryImpl();
@@ -87,15 +93,19 @@ const PostDetail = () => {
             const success = await postRepositoryImpl.dislikePostById(post.post_id);
             if (success) {
                 setIsUserLiked(false);
-                setLikesCount(likesCount-1);
+                setLikesCount(likesCount - 1);
             }
         } else {
             const success = await postRepositoryImpl.likePostById(post.post_id);
             if (success) {
                 setIsUserLiked(true);
-                setLikesCount(likesCount+1);
+                setLikesCount(likesCount + 1);
             }
         }
+    };
+
+    const handleBookmarkIconClick = () => {
+        setIsBookmarkModalOpen(true);
     };
 
     const handleBookmarkClick = async () => {
@@ -109,6 +119,38 @@ const PostDetail = () => {
             }
         }
     };
+
+    const fetchUserLists = async () => {
+        const listRepositoryImpl = new ListRepositoryImpl();
+        const data = await listRepositoryImpl.getAllLists();
+        setUserLists(data);
+    };
+
+    const addUserLists = async () => {
+        if (newListName !== '') {
+            const listRepositoryImpl = new ListRepositoryImpl();
+            const success = await listRepositoryImpl.createListWithName(newListName);
+            if (success) {
+                setNewListName('');
+                await fetchUserLists();
+            } else {
+                alert('Failed to create list');
+            }
+        }
+    };
+
+    const handleCheckboxChange = async (index, checked) => {
+        const listRepositoryImpl = new ListRepositoryImpl();
+        if (checked) {
+            await listRepositoryImpl.addPostToList(userLists[index].id, post.post_id);
+        } else {
+            await listRepositoryImpl.deletePostFromList(userLists[index].id, post.post_id);
+        }
+    };
+
+    useEffect(() => {
+        fetchUserLists();
+    }, []);
 
     const handleEditClick = () => {
         navigate(`/p/${post.post_id}`);
@@ -160,7 +202,7 @@ const PostDetail = () => {
                             {post.comments_count}
                         </div>
                         <div className="ml-auto flex items-center mr-6">
-                            <img className='cursor-pointer' src={isUserBookmark ? ic_bookmark_selected : ic_bookmark} alt='' onClick={handleBookmarkClick} />
+                            <img className='cursor-pointer' src={isUserBookmark ? ic_bookmark_selected : ic_bookmark} alt='' onClick={handleBookmarkIconClick} />
                             {localStorage.getItem('user_id') === post.user_id.toString() && (
                                 <img className='mx-2 cursor-pointer' onClick={handleEditClick} src={ic_edit} alt='' />
                             )}
@@ -171,7 +213,53 @@ const PostDetail = () => {
                     </div>
                     <div className="mx-auto my-4 border-t border-gray-150 w-600"></div>
                     <img className="w-full h-80 object-cover my-4 bg-gray-150" src={post.image} alt='' />
-
+                    {isBookmarkModalOpen && (
+                        <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center z-50">
+                            <div className="bg-blue-100 px-8 py-4 rounded-md shadow-md">
+                                <div className='flex'>
+                                    <label className='text-2lg font-bold text-black mr-64'>Add to list</label>
+                                    <img className='ml-auto mb-4 cursor-pointer' src={ic_close} alt='' onClick={() => setIsBookmarkModalOpen(false)} />
+                                </div>
+                                <div className="flex items-center mb-2">
+                                    <input
+                                        type="checkbox"
+                                        checked={isUserBookmark}
+                                        onChange={handleBookmarkClick}
+                                        className="mr-2"
+                                    />
+                                    <label className="text-black">Reading List</label>
+                                </div>
+                                {userLists.map((list, index) => (
+                                    <div key={index} className="flex items-center mb-2">
+                                        <input
+                                            type="checkbox"
+                                            id={`list-${index}`}
+                                            onChange={(e) => handleCheckboxChange(index, e.target.checked)}
+                                            className="mr-2"
+                                        />
+                                        <label htmlFor={`list-${index}`} className="text-black">{list.name}</label>
+                                    </div>
+                                ))}
+                                <div>
+                                    <p className="text-2lg font-bold text-black mr-64 mt-12">Create new list:</p>
+                                    <input
+                                        type="text"
+                                        name="text"
+                                        value={newListName}
+                                        onChange={(e) => { setNewListName(e.target.value) }}
+                                        className={`w-full border border-gray-300 rounded-lg bg-transparent py-1.5 pl-2 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6`}
+                                        placeholder="List name..."
+                                    />
+                                </div>
+                                <div className="flex justify-center mt-8">
+                                    <button
+                                        onClick={addUserLists}
+                                        className="mx-4 bg-green-500 hover:bg-green-600 focus:outline-none text-white px-4 py-1.5 rounded-[2rem] border-none"
+                                    >Add List</button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                     {showPayment === true ? userId !== '' ? <div className="flex justify-center items-center bg-gray-150">
                         <div className="w-full h-80 px-32 bg-gray-150 flex items-center">
                             <p className="text-lg">You need to pay to view more posts</p>

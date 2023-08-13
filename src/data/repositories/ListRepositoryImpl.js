@@ -61,7 +61,7 @@ export default class ListRepositoryImpl {
 
         try {
             const response = await fetch(`http://localhost:3000/remove-from-list`, {
-                method: 'POST',
+                method: 'DELETE',
                 body: formData
             });
 
