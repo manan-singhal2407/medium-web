@@ -6,7 +6,8 @@ import ListsBookmarkEntity from "../model/ListsBookmarkEntity";
 import PostByIdEntity from "../model/PostByIdEntity";
 import PostEntity from "../model/PostEntity";
 import PostHomeEntity from "../model/PostHomeEntity";
-import PostSearchEntity from "../model/PostSearchEntity";
+import VersionAllEntity from "../model/VersionAllEntity";
+import VersionEntity from "../model/VersionEntity";
 
 export default class PostRepositoryImpl {
     async createNewPostForUser(title, topic, image, text, publish) {
@@ -480,6 +481,47 @@ export default class PostRepositoryImpl {
             return [];
         } catch (error) {
             return [];
+        }
+    }
+
+    async getAllVersionOfAPost(postId) {
+        try {
+            const response = await fetch(`http://localhost:3000/get-all-versions-of-post?token=${localStorage.getItem('user_token')}&post_id=${postId}`, {
+                method: 'GET'
+            });
+
+            if (response.status === 200) {
+                const data = await response.json();
+                if (data.status === 200) {
+                    const versionAllEntities = [];
+                    for (const version of data.versions) {
+                        const versionAllEntity = new VersionAllEntity(version);
+                        versionAllEntities.push(versionAllEntity);
+                    }
+                    return versionAllEntities;
+                }
+            }
+            return [];
+        } catch (error) {
+            return [];
+        }
+    }
+
+    async getSpecificVersion(postId, version) {
+        try {
+            const response = await fetch(`http://localhost:3000/view-a-version-of-post?token=${localStorage.getItem('user_token')}&post_id=${postId}&version=${version}`, {
+                method: 'GET'
+            });
+
+            if (response.status === 200) {
+                const data = await response.json();
+                if (data.status === 200) {
+                    return new VersionEntity(data.version);
+                }
+            }
+            return null;
+        } catch (error) {
+            return null;
         }
     }
 

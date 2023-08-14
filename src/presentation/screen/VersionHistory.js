@@ -1,99 +1,104 @@
 import React, { useEffect, useState } from 'react';
-import TopNavBar from '../components/TopAppBar';
-import { useSearchParams } from 'react-router-dom';
-import PostViewComponent from '../components/PostViewComponent';
-import TopicsViewComponent from '../components/TopicsViewComponent';
-import ProfileViewComponent from '../components/ProfileViewComponent';
-import ListViewComponent from '../components/ListViewComponent';
-import SearchRepositoryImpl from '../../data/repositories/SearchRepositoryImpl';
-import { returnRandomList } from '../../data/dummy/DummyData';
+import { useNavigate, useParams } from 'react-router-dom';
+import PostRepositoryImpl from '../../data/repositories/PostRepositoryImpl';
+import TopNavBarEditor from '../components/TopAppBarEditor';
+import { CKEditor } from '@ckeditor/ckeditor5-react';
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import { PrimaryButton } from '../components/atom/AppButton';
 
 const VersionHistory = () => {
-    const [searchParams, setSearchParams] = useSearchParams();
-    const searchText = searchParams.get('q');
+    const navigate = useNavigate();
+    const params = useParams();
+    const postId = params.id;
 
     const [activeTab, setActiveTab] = useState(1);
 
-    const [posts, setPosts] = useState([]);
-    const [profiles, setProfiles] = useState([]);
-    const [topics, setTopics] = useState([]);
-    const [loading, setLoading] = useState(false);
+    const [versionList, setVersionList] = useState([]);
+    const [title, setTitle] = useState('');
+    const [content, setContent] = useState('');
+    const [image, setImage] = useState(null);
 
-    const fetchPostData = async () => {
-        if (loading) return;
+    const fetchAllVersion = async () => {
+        const postRepositoryImpl = new PostRepositoryImpl();
+        const data = await postRepositoryImpl.getAllVersionOfAPost(postId);
+        await handleVersionChangeClick(0);
+        setVersionList(data);
+    };
 
-        setLoading(true);
-        const searchRepositoryImpl = new SearchRepositoryImpl();
-        const postList = await searchRepositoryImpl.searchPostUsingKeyword(searchText);
-        setPosts(postList);
+    const handleVersionChangeClick = async (index) => {
+        setActiveTab(index + 1);
+        const postRepositoryImpl = new PostRepositoryImpl();
+        const data = await postRepositoryImpl.getSpecificVersion(postId, index + 1);
+        setTitle(data.title);
+        setContent(data.content);
+        setImage(data.image);
+    };
 
-        const profileList = await searchRepositoryImpl.searchAuthorUsingKeyword(searchText);
-        setProfiles(profileList);
-
-        const topicsList = await searchRepositoryImpl.searchTopicsUsingKeyword(searchText);
-        setTopics(topicsList);
-
-        setLoading(false);
+    const handleButtonClick = async () => {
+        const postRepositoryImpl = new PostRepositoryImpl();
+        const success = await postRepositoryImpl.updateUserPostWithId(postId, title, '', image, content, false);
+        if (success) {
+            navigate(`/p/${postId}`);
+        }
     };
 
     useEffect(() => {
-        fetchPostData();
-    }, [searchText]);
-
-    // useEffect(() => {
-    //     const handleScroll = () => {
-    //         if ((window.innerHeight + window.scrollY) >= document.documentElement.scrollHeight && activeTab === 1) {
-    //             fetchPostData();
-    //         }
-    //     };
-    //     window.addEventListener('scroll', handleScroll);
-    //     return () => {
-    //         window.removeEventListener('scroll', handleScroll);
-    //     };
-    // }, [fetchPostData]);
+        fetchAllVersion();
+    }, []);
 
     return (
         <div className="flex-col items-top justify-center h-screen w-screen">
-            <TopNavBar searchTextParam={searchText} fromDateParam={searchParams.get('fromDate')}
-                toDateParam={searchParams.get('toDate')} likesParam={searchParams.get('likes')}
-                commentsParam={searchParams.get('comments')} />
+            <TopNavBarEditor />
             <div style={{ width: '1200px' }} className="mx-auto mt-8 text-start p-4 flex">
                 <div style={{ width: '400px' }} className="mx-auto text-start">
-                    <div className='ml-8'>
+                    {versionList.length !== 0 && <div className='ml-8'>
                         <div className='mb-8'>
                             <h1 className="text-xl font-bold text-black mb-4">Previous History</h1>
-                            {/* <TopicsViewComponent topicsList={topics.slice(0, 6)} /> */}
+                            {versionList.map((versionAllEntity, index) => (
+                                <div key={index} onClick={() => handleVersionChangeClick(index)} className={`cursor-pointer flex items-center py-8 flex-col ${activeTab === (index + 1) ? 'bg-gray-200' : 'bg-white-200'}`}>
+                                    <label className="cursor-pointer text-black font-bold mb-1">{versionAllEntity.title}</label>
+                                    <label className="cursor-pointer text-black">Autosaved at {versionAllEntity.created_at.slice(11, 16)} on {versionAllEntity.created_at.slice(0, 10)}</label>
+                                </div>
+                            ))}
+                        </div>
+                    </div>}
+                </div>
+                <div style={{ width: '800px', height: '100%' }} className='mx-auto mt-4 pb-16 px-8'>
+                    <input
+                        type="text"
+                        value={title}
+                        placeholder="Title"
+                        style={{ width: '800px' }}
+                        className="outline-none bg-transparent border-none text-6xl mb-4"
+                        disabled={true}
+                    />
+                    <div className='flex my-4'>
+                        <div
+                            style={{ width: '320px', height: '180px' }}
+                            className="bg-gray-300 relative"
+                        ><img src={image} alt="Selected" className="w-full h-full object-cover" />
+                        </div>
+                        <div className='ml-8'>
+                            <p className="text-black mb-1">Topics (Comma Sepearated)</p>
+                            <input
+                                type="text"
+                                disabled={true}
+                                name="text"
+                                value='Not Getting From the backend'
+                                style={{ width: '460px' }}
+                                className={'w-full border border-gray-300 rounded-lg bg-transparent py-1.5 pl-2 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6'}
+                                placeholder="Android, Kotlin, Programming, React.js"
+                            />
                         </div>
                     </div>
+                    <CKEditor
+                        editor={ClassicEditor}
+                        data={content}
+                        disabled={true}
+                    />
+                    <div className='mt-8'></div>
+                    <PrimaryButton text='Get this version' onClickHandle={handleButtonClick}/>
                 </div>
-                {/* <div style={{ width: '800px' }} className="mx-auto text-start">
-                    {searchText !== '' && (
-                        <div>
-                            <h1 className="text-4xl font-bold mb-4 text-black mb-12 pl-4">Results for {searchText}</h1>
-                            <div>
-                                <div>
-                                    <a href="#" className={`px-1 mx-4 my-2 py-4 text-gray-700 hover:text-black ${activeTab === 1 ? 'border-b-2 border-black' : ''}`} onClick={() => setActiveTab(1)}>Posts</a>
-                                    <a href="#people" className={`px-1 mx-4 my-2 py-4 text-gray-700 hover:text-black ${activeTab === 2 ? 'border-b-2 border-black' : ''}`} onClick={() => setActiveTab(2)}>People</a>
-                                    <a href="#topics" className={`px-1 mx-4 my-2 py-4 text-gray-700 hover:text-black ${activeTab === 3 ? 'border-b-2 border-black' : ''}`} onClick={() => setActiveTab(3)}>Topics</a>
-                                    <a href="#lists" className={`px-1 mx-4 my-2 py-4 text-gray-700 hover:text-black ${activeTab === 4 ? 'border-b-2 border-black' : ''}`} onClick={() => setActiveTab(4)}>Lists</a>
-                                </div>
-                            </div>
-                            <div className="ml-4 mr-12 my-4 border-t border-gray-150"></div>
-                        </div>
-                    )}
-                    {activeTab === 1 && (
-                        posts.map((post, index) => <PostViewComponent post={post} key={index} />)
-                    )}
-                    {activeTab === 2 && (
-                        profiles.map((profile, index) => (<ProfileViewComponent profile={profile} key={index} />))
-                    )}
-                    {activeTab === 3 && (
-                        <TopicsViewComponent topicsList={topics} />
-                    )}
-                    {activeTab === 4 && (
-                        returnRandomList(10).map((list, index) => (<ListViewComponent list={list} key={index} />))
-                    )}
-                </div> */}
             </div>
         </div>
     );

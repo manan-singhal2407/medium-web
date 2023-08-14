@@ -9,7 +9,7 @@ const fromDollarToCent = amount => parseInt(amount * 100);
 
 const sendUpdateToServer = async () => {
     const postRepositoryImpl = new PostRepositoryImpl();
-    await postRepositoryImpl.userPayedAmount(5);
+    await postRepositoryImpl.userPayedAmount(10);
 }
 
 const successPayment = data => {
